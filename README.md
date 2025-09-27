@@ -1,35 +1,43 @@
-# COMP345-F25
-This is the repository for the Fall 2025 COMP345 Project. The latest successful builds will always be put onto this repo. Any collaboration is to be made on here.
+# Warzone Risk Game — COMP 345 (Fall 2025)
 
-
-# 🕹️ COMP 345 — Assignment 1 (Fall 2025)
-**Course:** Concordia University – Department of Computer Science and Software Engineering  
-**Project:** Advanced Program Design with C++  
+**Course:** Advanced Program Design with C++  
+**University:** Concordia University – Department of Computer Science and Software Engineering  
+**Language:** C++17  
 **Team Members:**  
-- Peter — Part 1: Map  
-- Adam — Part 2: Player  
-- Abdellah — Part 3: Orders List  
-- Carlos — Part 4: Cards  
-- Victor — Part 5: Game Engine  
+- Peter —  
+- Adam — 40237870 
+- Abdellah — 
+- Carlos —   
+- Victor — 40284702  
 
 ---
 
-## 📖 Overview
-This project is the first team assignment for **COMP 345 (Advanced Program Design with C++)**.  
-The goal is to implement a modular Warzone-style game engine in C++.  
+## Project Overview
+This repository contains our **semester-long team project** for COMP 345.  
+The project is divided into **three assignments**, each building on the previous one, to gradually develop a playable **Risk-style game engine** based on the rules of [Warzone](https://www.warzone.com/).
 
-The assignment is divided into **five parts**, each handled by one team member:
-1. **Map** – Graph-based representation of the game map with validation.
-2. **Player** – Represents players, their territories, and their decisions.
-3. **Orders List** – Abstract base class for orders and an orders list manager.
-4. **Cards** – Deck and hand system for Warzone cards.
-5. **Game Engine** – State machine managing the flow of the game.
+- **Assignment 1:** Core architecture (Map, Player, Orders, Cards, Game Engine).  
+- **Assignment 2:** Reinforcement rules, battle simulation, order execution logic.  
+- **Assignment 3:** Full game flow with advanced features and final polish.  
 
-At this stage, each part is implemented separately with its own driver file for demonstration.
+The end goal is a complete **command-line playable Warzone game**.
 
 ---
 
-## 📂 Project Structure
+## Game Description
+- The **map** is a connected graph: nodes = territories, edges = adjacency.  
+- **Continents** are connected subgraphs with control bonuses.  
+- **Players** own territories and armies, issue orders, and attempt to conquer the map.  
+- The **main loop** follows Warzone’s phases:  
+  1. **Startup** → assign players & territories.  
+  2. **Reinforcement** → armies allocated.  
+  3. **Orders Issuing** → players declare moves.  
+  4. **Orders Execution** → battles resolved, territories conquered.  
+  5. **End** → winner declared.  
+
+---
+
+## Repository Structure
 ├── src/
 │ ├── Map.h / Map.cpp / MapDriver.cpp
 │ ├── Player.h / Player.cpp / PlayerDriver.cpp
@@ -37,30 +45,20 @@ At this stage, each part is implemented separately with its own driver file for 
 │ ├── Cards.h / Cards.cpp / CardsDriver.cpp
 │ ├── GameEngine.h / GameEngine.cpp / GameEngineDriver.cpp
 │ └── MainDriver.cpp
-├── CMakeLists.txt # Build configuration (if using CMake)
-└── README.md # Project documentation
+├── CMakeLists.txt
+└── README.md
 
 
----
-
-## 🛠️ Requirements
-- All user-defined class members must be **pointers**.
-- Each class implements:
-  - Copy constructor  
-  - Assignment operator  
-  - Destructor  
-  - Stream insertion operator (`operator<<`)  
-- Code must avoid memory leaks.  
-- No inline implementations (all functions in `.cpp`).  
-- Drivers demonstrate functionality for each part.  
+- Each **Assignment Part** has its own `.h/.cpp` duo + a **driver file** for testing.  
+- `MainDriver.cpp` integrates everything and demonstrates the full assignment.  
 
 ---
 
-## 🚀 Build & Run
-### Using CMake
-```bash
-mkdir build
-cd build
-cmake ..
-make
-./Comp345A1
+## 📅 Progress
+- **Assignment 1** — *In Progress*  
+  - Implementing core classes & drivers.  
+- **Assignment 2** — *Not Started*  
+  - Will extend A1 with reinforcement & battle logic.  
+- **Assignment 3** — *Not Started*  
+  - Will finalize game engine & advanced features.  
+
