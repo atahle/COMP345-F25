@@ -5,7 +5,8 @@ using namespace std;
 void testCards() {
     cout << "=== Testing Cards, Deck, and Hand ===" << endl;
 
-    Deck deck(10);   // create a deck of 10 cards
+    // create a deck of 10 cards
+    Deck deck(10);   
     Hand hand;
 
     // Draw 5 cards into the hand
