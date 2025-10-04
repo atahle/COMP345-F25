@@ -1,0 +1,72 @@
+[Map]
+author=André Beauséjour
+warn=no
+image=Québec.bmp
+wrap=no
+scroll=no
+
+[Continents]
+Nouveau Québec=6
+Labrador=5
+Abitibi=5
+Rive Nord=6
+Côte Nord=4
+Cantons de l'est=3
+Bas du Fleuve=2
+
+[Territories]
+
+Uniujak,189,256,Nouveau Québec,Inukjuak,Nunavik,Kuujjuarapik
+Ivujivik,178,87,Nouveau Québec,Salluit,Inukjuak
+Salluit,249,95,Nouveau Québec,Ungava,Ivujivik
+Inukjuak,185,178,Nouveau Québec,Ungava,Ivujivik,Uniujak
+Ungava,279,184,Nouveau Québec,Salluit,Inukjuak,Nunavik,Kuujuaq
+Nunavik,271,268,Nouveau Québec,Ungava,Kuujuaq,Kuujjuarapik,Uniujak
+Kuujjuarapik,195,322,Nouveau Québec,Nunavik,Baie James,La Grande,Uniujak
+Baie James,106,369,Nouveau Québec,Kuujjuarapik,La Grande,Eastmain
+La Grande,226,410,Nouveau Québec,Kuujjuarapik,Caniapiscau,Baie James,Eastmain,Mistassini,Lac St-Jean
+Eastmain,120,450,Nouveau Québec,Baie James,La Grande,Mistassini,Matagami
+
+Goose Bay,604,404,Labrador,Côtes du Labrador,Churchill,Blanc Sablon
+Kangiqsualujjaq,412,226,Labrador,Kuujuaq,Côtes du Labrador
+Kuujuaq,372,299,Labrador,Caniapiscau,Churchill,Côtes du Labrador,Nunavik,Ungava,Kangiqsualujjaq
+Côtes du Labrador,492,305,Labrador,Kuujuaq,Churchill,Kangiqsualujjaq,Goose Bay,Salluit
+Caniapiscau,331,388,Labrador,Kuujuaq,La Grande,Fermont,Churchill
+Churchill,468,399,Labrador,Côtes du Labrador,Kuujuaq,Caniapiscau,Fermont,Sept-Iles,Havre St-Pierre,Blanc Sablon,Goose Bay
+Fermont,342,458,Labrador,Lac St-Jean,Caniapiscau,Churchill,Manicouagan,Sept-Iles
+
+Matagami,96,540,Abitibi,Eastmain,Mistassini,Témiscamingue,Rouyn
+Mistassini,180,537,Abitibi,Eastmain,La Grande,Lac St-Jean,Gouin,Matagami
+Lac St-Jean,241,570,Abitibi,La Grande,Fermont,Manicouagan,Saguenay,Mauricie,Gouin,Mistassini
+Rouyn,50,635,Abitibi,Matagami,Témiscamingue,Outaouais
+Témiscamingue,105,618,Abitibi,Rouyn,Matagami,Gouin,Outaouais
+Outaouais,102,692,Abitibi,Témiscamingue,Laurentides,Rouyn,Laval
+Gouin,169,627,Abitibi,Mistassini,Lac St-Jean,Mauricie,Lanaudière,Laurentides,Témiscamingue
+Saguenay,271,623,Abitibi,Lac St-Jean,Manicouagan,Charlevoix,Stoneham
+
+Manicouagan,325,552,Côte Nord,Fermont,Sept-Iles,Charlevoix,Saguenay,Lac St-Jean,Matane
+Sept-Iles,398,517,Côte Nord,Fermont,Churchill,Havre St-Pierre,Manicouagan
+Havre St-Pierre,486,493,Côte Nord,Churchill,Blanc Sablon,Natashquan,Sept-Iles
+Natashquan,548,518,Côte Nord,Havre St-Pierre,Blanc Sablon,Anticosti
+Blanc Sablon,584,465,Côte Nord,Churchill,Natashquan,Havre St-Pierre,Goose Bay
+
+Stoneham,253,656,Rive Nord,Saguenay,Charlevoix,Québec,Mauricie
+Laurentides,150,687,Rive Nord,Gouin,Lanaudière,Laval,Outaouais
+Lanaudière,187,697,Rive Nord,Gouin,Mauricie,Montréal,Laval,Laurentides
+Mauricie,213,676,Rive Nord,Gouin,Lac St-Jean,Québec,Lanaudière,Stoneham
+Québec,252,683,Rive Nord,Charlevoix,Mauricie,Chaudière,Stoneham
+Charlevoix,283,652,Rive Nord,Saguenay,Manicouagan,Québec,Stoneham
+Laval,170,725,Rive Nord,Laurentides,Lanaudière,Montréal,Outaouais
+Montréal,183,742,Rive Nord,Laval,Lanaudière,Montérégie
+
+Montérégie,210,750,Cantons de l'est,Montréal,Centre du Québec,Estrie
+Centre du Québec,235,728,Cantons de l'est,Montérégie,Estrie,Chaudière
+Estrie,249,749,Cantons de l'est,Montérégie,Centre du Québec,Chaudière
+Chaudière,276,709,Cantons de l'est,Centre du Québec,Estrie,Rimouski,Québec
+
+Rimouski,324,653,Bas du Fleuve,Chaudière,Matane
+Matane,372,625,Bas du Fleuve,Rimouski,Gaspésie,Chaudière
+Gaspésie,428,611,Bas du Fleuve,Sept-Iles,Anticosti,Matane,Iles de la Madeleine
+Anticosti,497,581,Bas du Fleuve,Natashquan,Gaspésie,Iles de la Madeleine
+Iles de la Madeleine,523,655,Bas du Fleuve,Anticosti,Gaspésie
+
