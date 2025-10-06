@@ -1,4 +1,5 @@
 # Build
+/out/
 /build/
 /CMakeFiles/
 /CMakeCache.txt
@@ -8,6 +9,7 @@ Makefile
 # IDE
 .vscode/
 .idea/
+.vs/
 
 # OS
 .DS_Store
