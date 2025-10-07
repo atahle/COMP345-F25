@@ -26,13 +26,24 @@ void testLoadMaps() {
         "non_existent_file.txt" // A file that doesn't exist to test error handling
     };
 
+    std::string pathToFile;
+    std::cout << "Please enter the folder path of the maps: \n";
+    std::getline(std::cin, pathToFile);
+
+    if (pathToFile.length() > 0 && pathToFile[pathToFile.length() - 1] != '\\') {
+        pathToFile += '\\';
+    }
+
+
     // Loop through the list of files and try to load each one
     for (const std::string& filename : mapFilesToTest) {
         std::cout << "-----------------------------------------\n";
         std::cout << "Attempting to load map: " << filename << "\n";
         std::cout << "-----------------------------------------\n";
 
-        Map* map = loader.loadMap(filename);
+        std::cout << pathToFile << filename;
+        
+        Map* map = loader.loadMap(pathToFile+filename);
 
         // Check if the map was loaded successfully
         if (map != nullptr) {
@@ -54,4 +65,9 @@ void testLoadMaps() {
             std::cout << "FAILURE: Map could not be loaded. File rejected. ❌\n\n";
         }
     }
+}
+
+int main() {
+    testLoadMaps();
+    return 0;
 }

@@ -1,0 +1,17 @@
+; Warzone map file - INVALID MAP
+; This map is invalid because Territory 4 (Isolated Isle) is disconnected.
+
+[Continents]
+Goodland=5
+Badland=2
+
+[Territories]
+Safe Haven,10,10,Goodland
+Crossroads,20,20,Goodland
+Frontier,30,30,Goodland
+Isolated Isle,40,40,Badland
+
+[Borders]
+1 2
+2 1 3
+3 2

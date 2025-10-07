@@ -42,3 +42,8 @@ void testPlayers()
 
     std::cout << "----- End of Player Class Tests -----" << std::endl;
 }
+
+int main() {
+    testPlayers();
+    return 0;
+}
