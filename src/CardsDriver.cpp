@@ -33,8 +33,3 @@ void testCards() {
 
     cout << "\n=== Done Testing ===" << endl;
 }
-
-int main() {
-    testCards();
-    return 0;
-}

@@ -26,7 +26,3 @@ void testOrdersLists() {
     std::cout << "After execute all:" << list << std::endl;
     std::cout << "\n------------------\n";
 }
-int main() {
-    testOrdersLists();
-    return 0;
-}

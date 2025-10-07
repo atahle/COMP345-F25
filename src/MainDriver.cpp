@@ -1,20 +1,59 @@
 #include <iostream>
-
-// Forward declaration for the test function defined in MapDriver.cpp.
-// This tells the compiler that the function exists and will be linked later.
-void testLoadMaps();
+#include "GameEngineDriver.h"
+#include "CardsDriver.h"
+#include "PlayerDriver.h"
+#include "MapDriver.h"
+#include "OrdersDriver.h"
 
 int main() {
+
     std::cout << "🚀 Starting Warzone Game C++ Project Tests 🚀\n";
+    int choice = -1;
 
-    // Call the test function for Part 1
-    testLoadMaps();
+    do {
+        std::cout << "  [1] - Run testLoadMaps\n";
+        std::cout << "  [2] - Run testPlayers\n";
+        std::cout << "  [3] - Run testOrdersLists\n";
+        std::cout << "  [4] - Run testCards\n";
+        std::cout << "  [5] - Run testGameStates\n";
+        std::cout << "  [0] - Quit Program\n";
+        std::cout << "---------------------------------------\n";
+        std::cout << "Enter your choice (0-5): ";
 
-    // In the future, you will add calls to other test functions here:
-    // testPlayers();
-    // testOrdersLists();
-    // testCards();
-    // testGameStates();
+        if (!(std::cin >> choice)) {
+            std::cout << "\n[Error] Invalid input. Please enter a number (0-5).\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            choice = -1; 
+            continue;
+        }
+
+        switch (choice) {
+        case 1:
+            testLoadMaps();
+            break;
+        case 2:
+            testPlayers();
+            break;
+        case 3:
+            testOrdersLists();
+            break;
+        case 4:
+            testCards();
+            break;
+        case 5:
+            testGameStates();
+            break;
+        case 0:
+            std::cout << "\n[Program Exit] Thank you for using the menu!\n";
+            break;
+        default:
+            std::cout << "\n[Warning] Invalid option. Please select a number between 0 and 5.\n";
+            break;
+        }
+
+    } while (choice != 0);
+    
 
     std::cout << "\nAll tests have concluded. Exiting program.\n";
 

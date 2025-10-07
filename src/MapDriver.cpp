@@ -28,6 +28,7 @@ void testLoadMaps() {
 
     std::string pathToFile;
     std::cout << "Please enter the folder path of the maps: \n";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::getline(std::cin, pathToFile);
 
     if (pathToFile.length() > 0 && pathToFile[pathToFile.length() - 1] != '\\') {
@@ -67,7 +68,3 @@ void testLoadMaps() {
     }
 }
 
-int main() {
-    testLoadMaps();
-    return 0;
-}

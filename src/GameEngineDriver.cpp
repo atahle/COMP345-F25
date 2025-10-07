@@ -32,7 +32,7 @@ void testGameStates() {
 
     while (true) {
         cout << "enter a command that matches a transition or 'exit'/'quit' to exit" << endl;
-        getline(cin, command);
+        cin>> command;
         
         transform(command.begin(), command.end(), command.begin(),
             [](unsigned char c) { return tolower(c); });
@@ -53,8 +53,3 @@ void testGameStates() {
     }
 }
 
-int main() {
-    testGameStates();
-
-    return 0;
-}

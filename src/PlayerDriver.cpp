@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Player.h"
 #include "Map.h"
+
 void testPlayers()
 {
     std::cout << "----- Testing Player Class -----" << std::endl;
@@ -41,9 +42,4 @@ void testPlayers()
     std::cout << "After issuing orders to p1: " << p1 << std::endl;
 
     std::cout << "----- End of Player Class Tests -----" << std::endl;
-}
-
-int main() {
-    testPlayers();
-    return 0;
 }
