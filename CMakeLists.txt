@@ -7,10 +7,33 @@ if (MSVC)
 else()
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
-add_executable(WarzoneRiskGame
-    src/MainDriver.cpp
-)
 add_executable(OrdersDriver
     src/OrdersDriver.cpp
     src/Orders.cpp
+)
+add_executable(GameEngineDriver
+    src/GameEngineDriver.cpp 
+    src/GameEngine.cpp 
+    src/Player.cpp
+    src/Map.cpp
+    src/Cards.cpp
+    src/Orders.cpp)
+
+add_executable(PlayerDriver
+    src/PlayerDriver.cpp
+    src/Player.cpp
+    src/Map.cpp
+    src/Orders.cpp
+    src/Cards.cpp
+)
+
+add_executable(CardsDriver
+    src/CardsDriver.cpp
+    src/Cards.cpp
+)
+
+add_executable(MapDriver
+    src/MapDriver.cpp
+    src/Map.cpp
+
 )
