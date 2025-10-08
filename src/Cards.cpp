@@ -3,8 +3,9 @@
 #include <algorithm>
 using namespace std;
 
-// Card
+// ---------------------- Card ----------------------
 
+// Constructors and assignment operators
 Card::Card(CardType t) : type(t) {}
 Card::Card(const Card& other) : type(other.type) {}
 Card::Card(Card&& other) noexcept : type(other.type) {}
@@ -21,30 +22,30 @@ Card& Card::operator=(Card&& other) noexcept {
 
 Card::~Card() {}
 
+// Returns the card type
 Card::CardType Card::getType() const { return type; }
 
+// Plays the card: prints actions and returns the card to the deck
 void Card::play(Deck& deck) {
     string types[] = { "BOMB", "REINFORCEMENT", "BLOCKADE", "AIRLIFT", "DIPLOMACY" };
 
-    // Creating an order
     cout << "Creating order from card: " << types[type] << endl;
-
-    // Adding order to orders list
     cout << "Order added to player's OrdersList." << endl;
 
-    // Return card to deck
     deck.addCard(new Card(type));
     cout << "Card returned to deck.\n";
 }
 
+// Prints the card type
 ostream& operator<<(ostream& out, const Card& card) {
     string types[] = { "BOMB", "REINFORCEMENT", "BLOCKADE", "AIRLIFT", "DIPLOMACY" };
     out << types[card.type];
     return out;
 }
 
-// Deck
+// ---------------------- Deck ----------------------
 
+// Creates a deck with a given number of cards (cyclic types)
 Deck::Deck(int numCards) {
     srand(static_cast<unsigned int>(time(0)));
     for (int i = 0; i < numCards; i++) {
@@ -53,36 +54,44 @@ Deck::Deck(int numCards) {
     }
 }
 
+// Copy constructor: deep copies all cards
 Deck::Deck(const Deck& other) {
-    for (Card* c : other.cards) cards.push_back(new Card(*c));
+    for (Card* c : other.cards)
+        cards.push_back(new Card(*c));
 }
 
-Deck::Deck(Deck&& other) noexcept : cards(std::move(other.cards)) {
+// Move constructor: transfers ownership
+Deck::Deck(Deck&& other) noexcept : cards(move(other.cards)) {
     other.cards.clear();
 }
 
+// Copy assignment: deep copy
 Deck& Deck::operator=(const Deck& other) {
     if (this != &other) {
         for (Card* c : cards) delete c;
         cards.clear();
-        for (Card* c : other.cards) cards.push_back(new Card(*c));
+        for (Card* c : other.cards)
+            cards.push_back(new Card(*c));
     }
     return *this;
 }
 
+// Move assignment: transfers ownership
 Deck& Deck::operator=(Deck&& other) noexcept {
     if (this != &other) {
         for (Card* c : cards) delete c;
-        cards = std::move(other.cards);
+        cards = move(other.cards);
         other.cards.clear();
     }
     return *this;
 }
 
+// Destructor: frees all cards
 Deck::~Deck() {
     for (Card* c : cards) delete c;
 }
 
+// Draws a random card from the deck
 Card* Deck::draw() {
     if (cards.empty()) {
         cout << "Deck is empty — cannot draw.\n";
@@ -94,27 +103,33 @@ Card* Deck::draw() {
     return c;
 }
 
+// Adds a card to the deck
 void Deck::addCard(Card* card) {
     if (card) cards.push_back(card);
 }
 
+// Returns true if deck is empty
 bool Deck::isEmpty() const { return cards.empty(); }
 
+// Prints all cards in the deck
 ostream& operator<<(ostream& out, const Deck& deck) {
     out << "Deck contains: ";
-    for (Card* c : deck.cards) out << *c << " ";
+    for (Card* c : deck.cards)
+        out << *c << " ";
     return out;
 }
 
-// Hand
+// ---------------------- Hand ----------------------
 
+// Constructors and assignment
 Hand::Hand() {}
 
 Hand::Hand(const Hand& other) {
-    for (Card* c : other.hand) hand.push_back(new Card(*c));
+    for (Card* c : other.hand)
+        hand.push_back(new Card(*c));
 }
 
-Hand::Hand(Hand&& other) noexcept : hand(std::move(other.hand)) {
+Hand::Hand(Hand&& other) noexcept : hand(move(other.hand)) {
     other.hand.clear();
 }
 
@@ -122,7 +137,8 @@ Hand& Hand::operator=(const Hand& other) {
     if (this != &other) {
         for (Card* c : hand) delete c;
         hand.clear();
-        for (Card* c : other.hand) hand.push_back(new Card(*c));
+        for (Card* c : other.hand)
+            hand.push_back(new Card(*c));
     }
     return *this;
 }
@@ -130,31 +146,38 @@ Hand& Hand::operator=(const Hand& other) {
 Hand& Hand::operator=(Hand&& other) noexcept {
     if (this != &other) {
         for (Card* c : hand) delete c;
-        hand = std::move(other.hand);
+        hand = move(other.hand);
         other.hand.clear();
     }
     return *this;
 }
 
+// Destructor: frees all cards in the hand
 Hand::~Hand() {
     for (Card* c : hand) delete c;
 }
 
+// Adds a card to the hand
 void Hand::addCard(Card* card) {
     if (card) hand.push_back(card);
 }
 
+// Removes a card at the given index
 Card* Hand::removeCard(int index) {
-    if (index < 0 || index >= static_cast<int>(hand.size())) return nullptr;
+    if (index < 0 || index >= static_cast<int>(hand.size()))
+        return nullptr;
     Card* c = hand[index];
     hand.erase(hand.begin() + index);
     return c;
 }
 
+// Returns true if hand is empty
 bool Hand::isEmpty() const { return hand.empty(); }
 
+// Prints all cards in the hand
 ostream& operator<<(ostream& out, const Hand& hand) {
     out << "Hand contains: ";
-    for (Card* c : hand.hand) out << *c << " ";
+    for (Card* c : hand.hand)
+        out << *c << " ";
     return out;
 }

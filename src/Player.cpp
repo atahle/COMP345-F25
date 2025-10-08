@@ -5,27 +5,28 @@
 #include "Cards.h"
 using namespace std;
 
+// Constructor: creates a new player with an empty hand, territory list, and orders list
 Player::Player(const string& playerName)
 {
     name = new string(playerName);
     territories = new vector<Territory*>();
-    orders = new OrdersList();     // <-- was: new vector<Order *>()
+    orders = new OrdersList();
     hand = new Hand();
 }
 
-
+// Copy constructor: performs a deep copy of owned data
 Player::Player(const Player& other)
 {
     name = new string(*other.name);
     territories = new vector<Territory*>();
-    for (Territory* t : *other.territories) {
-        territories->push_back(t);     // shallow copy of pointers is fine here
-    }
+    for (Territory* t : *other.territories)
+        territories->push_back(t);
+
     hand = new Hand(*other.hand);
-    orders = new OrdersList(*other.orders);   // <-- deep copy via OrdersList
+    orders = new OrdersList(*other.orders);
 }
 
-
+// Assignment operator: safely replaces this player's data with another's
 Player& Player::operator=(const Player& other)
 {
     if (this == &other) return *this;
@@ -37,37 +38,38 @@ Player& Player::operator=(const Player& other)
 
     name = new string(*other.name);
     territories = new vector<Territory*>();
-    for (Territory* t : *other.territories) {
+    for (Territory* t : *other.territories)
         territories->push_back(t);
-    }
+
     hand = new Hand(*other.hand);
-    orders = new OrdersList(*other.orders);   // <-- deep copy
+    orders = new OrdersList(*other.orders);
 
     return *this;
 }
 
-
+// Destructor: frees owned resources
 Player::~Player()
 {
     delete name;
     delete territories;
-    delete orders;  // OrdersList dtor deletes contained Order* safely
+    delete orders;
     delete hand;
 }
 
-
-void Player::addTerritory(Territory *t)
+// Adds a territory to the player if not already owned
+void Player::addTerritory(Territory* t)
 {
-    if (t && std::find(territories->begin(), territories->end(), t) == territories->end())
+    if (t && find(territories->begin(), territories->end(), t) == territories->end())
     {
         territories->push_back(t);
         t->setOwner(this);
     }
 }
 
-void Player::removeTerritory(Territory *t)
+// Removes a territory from the player if currently owned
+void Player::removeTerritory(Territory* t)
 {
-    auto it = std::find(territories->begin(), territories->end(), t);
+    auto it = find(territories->begin(), territories->end(), t);
     if (it != territories->end())
     {
         territories->erase(it);
@@ -75,34 +77,38 @@ void Player::removeTerritory(Territory *t)
     }
 }
 
-const vector<Territory *> &Player::getTerritories() const
+// Returns all territories owned by the player
+const vector<Territory*>& Player::getTerritories() const
 {
     return *territories;
 }
 
-std::ostream& operator<<(std::ostream& out, const Player& p)
+// Output operator: prints player's name, territories, and order count
+ostream& operator<<(ostream& out, const Player& p)
 {
     out << "Player " << *p.name << " owns territories: ";
-    for (Territory* t : *p.territories) out << t->getName() << ' ';
+    for (Territory* t : *p.territories)
+        out << t->getName() << ' ';
     out << " | hand: (present) | orders: " << p.getOrders().size();
     return out;
 }
 
-
-vector<Territory *> Player::toDefend()
+// Returns a list of territories the player should defend
+vector<Territory*> Player::toDefend()
 {
     return *territories;
 }
 
-vector<Territory *> Player::toAttack()
+// Returns a list of territories the player can attack
+vector<Territory*> Player::toAttack()
 {
-    vector<Territory *> attackable;
-    for (Territory *t : *territories)
+    vector<Territory*> attackable;
+    for (Territory* t : *territories)
     {
-        for (Territory *adj : t->getAdjacentTerritories())
+        for (Territory* adj : t->getAdjacentTerritories())
         {
             if (adj->getOwner() != this &&
-                std::find(attackable.begin(), attackable.end(), adj) == attackable.end())
+                find(attackable.begin(), attackable.end(), adj) == attackable.end())
             {
                 attackable.push_back(adj);
             }
@@ -111,22 +117,24 @@ vector<Territory *> Player::toAttack()
     return attackable;
 }
 
-void Player::issueOrder(const std::string& type)
+// Creates and adds an order of the given type to the player's list
+void Player::issueOrder(const string& type)
 {
     Order* o = nullptr;
 
-    if (type == "deploy")      o = new Deploy();
-    else if (type == "advance") o = new Advance();
-    else if (type == "bomb")    o = new Bomb();
-    else if (type == "blockade")o = new Blockade();
-    else if (type == "airlift") o = new Airlift();
-    else if (type == "negotiate") o = new Negotiate();
-    else                        o = new Advance();
+    if (type == "deploy")        o = new Deploy();
+    else if (type == "advance")  o = new Advance();
+    else if (type == "bomb")     o = new Bomb();
+    else if (type == "blockade") o = new Blockade();
+    else if (type == "airlift")  o = new Airlift();
+    else if (type == "negotiate")o = new Negotiate();
+    else                         o = new Advance();
 
-    orders->add(o);    // <-- changed from orders->push_back(o);
+    orders->add(o);
 }
 
-
-const OrdersList& Player::getOrders() const {
+// Returns a reference to the player's list of orders
+const OrdersList& Player::getOrders() const
+{
     return *orders;
 }
