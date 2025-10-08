@@ -16,6 +16,7 @@ void testGameStates() {
     string command;
 
 
+    //link function for transitions to a string
     map<string, GameTransition> transitions = {
         {"play",            &GameEngine::play},
         {"loadmap",         &GameEngine::loadMap},
@@ -30,10 +31,13 @@ void testGameStates() {
         {"end",             &GameEngine::end}
     };
 
+
+    //loop through 
     while (true) {
         cout << "enter a command that matches a transition or 'exit'/'quit' to exit" << endl;
         cin>> command;
         
+        // to lowercase
         transform(command.begin(), command.end(), command.begin(),
             [](unsigned char c) { return tolower(c); });
 
@@ -41,6 +45,7 @@ void testGameStates() {
             break; 
         }
 
+        //execute the appropriate function if not send error message
         auto it = transitions.find(command);
 
         if (it != transitions.end()) {

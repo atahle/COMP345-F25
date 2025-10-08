@@ -7,6 +7,8 @@
 #include "Map.h"
 #include "Player.h"
 
+
+// Game States
 enum class GameState {
     Start,
     MapLoaded,
@@ -17,18 +19,25 @@ enum class GameState {
     ExecuteOrders,
     Win
 };
+
+
 class GameEngine {
 private:
+
+    //Game General Variables
     GameState gameState{ GameState::Start };
     Map* map{ nullptr };
     std::vector<Player*>* players{ nullptr };  
 public:
+
+    //Game Constructor Destructor Copy and Stream
     GameEngine();
     GameEngine(const GameEngine& other);
     ~GameEngine();
     GameEngine& operator=(const GameEngine& other);
     friend std::ostream& operator<<(std::ostream& out, const GameEngine& ge);
 
+    //Game transition methods
     void loadMap();
     void validateMap();
     void addPlayer();
@@ -41,9 +50,11 @@ public:
     void play();
     void end();
 
+    //state getter
     GameState getCurrentState() const; 
 };
 
+//state enum -> String
 const char* stateToString(GameState s);
 
 #endif

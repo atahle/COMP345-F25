@@ -4,8 +4,11 @@
 #include "GameEngine.h"
 #include "Map.h"
 #include "Player.h"
+
 using namespace std;
 
+
+// relate the enum variable to a string equivalent to print
 const char* stateToString(GameState s) {
 	switch (s) {
 	case GameState::Start:               return "Start";
@@ -20,13 +23,17 @@ const char* stateToString(GameState s) {
 	return "Unknown";
 }
 
+//game state getter
 GameState GameEngine::getCurrentState() const { return gameState; }
 
+//----------------------
+//Constructor destructor copy assignment stream etc.for class Game Engine
+//----------------------
 
 GameEngine::GameEngine()
 	: gameState(GameState::Start),
 	map(nullptr),
-	players(new std::vector<Player*>()) {
+	players(new vector<Player*>()) {
 }
 
 GameEngine::~GameEngine() {
@@ -40,7 +47,7 @@ GameEngine::~GameEngine() {
 GameEngine::GameEngine(const GameEngine& other)
 	: gameState(other.gameState) {
 	map = other.map ? new Map(*other.map) : nullptr;
-	players = new std::vector<Player*>();
+	players = new vector<Player*>();
 	if (other.players) {
 		for (Player* op : *other.players) players->push_back(new Player(*op));
 	}
@@ -57,7 +64,7 @@ GameEngine& GameEngine::operator=(const GameEngine& other) {
 
 	gameState = other.gameState;
 	map = other.map ? new Map(*other.map) : nullptr;
-	players = new std::vector<Player*>();
+	players = new vector<Player*>();
 	if (other.players) {
 		for (Player* op : *other.players) players->push_back(new Player(*op));
 	}
@@ -65,7 +72,7 @@ GameEngine& GameEngine::operator=(const GameEngine& other) {
 }
 
 
-ostream& operator<<(std::ostream& out, const GameEngine& ge) {
+ostream& operator<<(ostream& out, const GameEngine& ge) {
 	out << stateToString(ge.getCurrentState()) << "\n";
 	out << "  Map: ";
 	if (ge.map) out << "Loaded (Address: " << ge.map << ")\n";
@@ -79,6 +86,11 @@ ostream& operator<<(std::ostream& out, const GameEngine& ge) {
 	return out;
 }
 
+//----------------------
+//Game Engine Transitions
+//----------------------
+
+
 void GameEngine::play() {
 	cout << "Initializing game... " << endl;
 	gameState = GameState::Start;
@@ -89,6 +101,8 @@ void GameEngine::end() {
 	cout << "ending game... " << endl;
 }
 
+
+// chosing map file and loading map
 void GameEngine::loadMap() {
 	string path;
 	MapLoader ml;
@@ -118,6 +132,8 @@ void GameEngine::loadMap() {
 	gameState = GameState::MapLoaded;
 }
 
+
+
 void GameEngine::validateMap() {
 	cout << "Validating Map..." << endl;
 
@@ -129,20 +145,20 @@ void GameEngine::validateMap() {
 	gameState = GameState::MapValidated;
 
 }
-
+//lets the user add players too the game
 void GameEngine::addPlayer() {
-	std::cout << "Adding players..." << std::endl;
-	std::string inputStr;
+	cout << "Adding players..." << endl;
+	string inputStr;
 
 	while (true) {
-		std::cout << "Enter the name of player #"
+		cout << "Enter the name of player #"
 			<< (players ? players->size() + 1 : 1)
 			<< ". Enter 'done' if you are done\n";
-		std::getline(std::cin, inputStr);
+		getline(cin, inputStr);
 
 		if (inputStr == "done") {
 			if (players && players->size() >= 2) break;
-			std::cout << "you must have at least 2 players\n";
+			cout << "you must have at least 2 players\n";
 			continue;
 		}
 		if (!inputStr.empty()) {
@@ -150,7 +166,7 @@ void GameEngine::addPlayer() {
 		}
 	}
 
-	std::cout << "Players added";
+	cout << "Players added";
 	gameState = GameState::PlayersAdded;
 }
 

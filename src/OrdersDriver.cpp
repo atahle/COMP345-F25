@@ -4,6 +4,7 @@
 void testOrdersLists() {
     std::cout << "\n--- Orders List Test ---\n\n";
 
+    // adding a few a orders to an order list
     OrdersList list;
     list.add(new Deploy());
     list.add(new Advance());
@@ -14,9 +15,11 @@ void testOrdersLists() {
 
     std::cout << "Initial list: " << list << std::endl;
 
+    //moving order
     list.move(0, list.size() - 1);
     std::cout << "After move(0 -> last):" << list << std::endl;
 
+    //removing 
     list.remove(2);
     std::cout << "After remove(2):" << list << std::endl;
 

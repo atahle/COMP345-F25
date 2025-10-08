@@ -1,7 +1,9 @@
 #include "Orders.h"
 #include <iomanip>
+//----------------------
+//Order constructor destructor copy assignment
+//----------------------
 
-//Order
 Order::Order(const std::string& n)
     : name(new std::string(n)), effect(new std::string("")), executed(false) {
 }
@@ -26,6 +28,8 @@ Order::~Order() {
     delete effect;
 }
 
+
+//order execution functions
 bool Order::validate() const {
     return !executed; // can't re-execute
 }
@@ -37,6 +41,7 @@ void Order::execute() {
     }
 }
 
+//Orders getter
 const std::string& Order::getName() const { return *name; }
 const std::string& Order::getEffect() const { return *effect; }
 bool Order::isExecuted() const { return executed; }
@@ -46,8 +51,10 @@ std::ostream& operator<<(std::ostream& out, const Order& o) {
     if (o.isExecuted()) out << "\t| effect: " << o.getEffect();
     return out;
 }
+//----------------------
+//Specific Orders (child of order)
+//----------------------
 
-//Specific Orders
 Deploy::Deploy() : Order("deploy") {}
 Deploy* Deploy::clone() const { return new Deploy(*this); }
 bool Deploy::validate() const { return Order::validate(); }
@@ -107,8 +114,11 @@ void Negotiate::execute() {
         *effect = "Established truce.";
     }
 }
-
+//----------------------
 //OrdersList
+//----------------------
+
+//OrderList Constructors, destructors etc
 OrdersList::OrdersList() : orders(new std::vector<Order*>) {}
 
 OrdersList::OrdersList(const OrdersList& other) : orders(new std::vector<Order*>) {
@@ -131,6 +141,8 @@ OrdersList::~OrdersList() {
     delete orders;
 }
 
+
+// Orderlist order management
 void OrdersList::add(Order* o) {
     if (o) orders->push_back(o);
 }
@@ -151,6 +163,7 @@ void OrdersList::move(size_t from, size_t to) {
 size_t OrdersList::size() const { return orders->size(); }
 const Order* OrdersList::at(size_t i) const { return orders->at(i); }
 
+// stream output orderlist
 std::ostream& operator<<(std::ostream& out, const OrdersList& list) {
     out << "\nOrdersList:\n";
     for (size_t i = 0; i < list.size(); ++i) {
