@@ -120,20 +120,98 @@ Map::~Map() {
 }
 Map::Map(const Map& other) {
     continents = new std::vector<Continent*>();
-    for (Continent* c : *other.continents) { continents->push_back(c); }
     territories = new std::vector<Territory*>();
-    for (Territory* t : *other.territories) { territories->push_back(t); }
+
+    // 1) clone continents (by name/bonus)
+    std::map<const Continent*, Continent*> contMap;
+    for (Continent* oc : *other.continents) {
+        Continent* nc = new Continent(oc->getName(), oc->getBonus());
+        continents->push_back(nc);
+        contMap[oc] = nc;
+    }
+
+    // 2) create new territories with same names/armies, remember mapping by name
+    std::map<const Territory*, Territory*> terrMap;
+    for (Territory* ot : *other.territories) {
+        Territory* nt = new Territory(ot->getName());
+        nt->setArmyCount(ot->getArmyCount());
+        territories->push_back(nt);
+        terrMap[ot] = nt;
+    }
+
+    // 3) assign continent membership in the new map
+    for (Continent* oc : *other.continents) {
+        Continent* nc = contMap[oc];
+        for (Territory* ot : oc->getTerritories()) {
+            Territory* nt = terrMap[ot];
+            nt->setContinent(nc);
+            nc->addTerritory(nt);
+        }
+    }
+
+    // 4) rebuild adjacency lists
+    for (Territory* ot : *other.territories) {
+        Territory* nt = terrMap[ot];
+        for (Territory* oAdj : ot->getAdjacentTerritories()) {
+            nt->addAdjacentTerritory(terrMap[oAdj]);
+        }
+    }
+
+    // 5) owner pointer: shallow copy is acceptable for Part 1 (Player is Part 2)
+    // If you want:
+    // nt->setOwner(ot->getOwner());
 }
+
 Map& Map::operator=(const Map& other) {
     if (this == &other) return *this;
+
+    // free current
+    for (Continent* c : *continents) delete c;
     delete continents;
+    for (Territory* t : *territories) delete t;
     delete territories;
+
+    // deep copy (same as ctor)
     continents = new std::vector<Continent*>();
-    for (Continent* c : *other.continents) { continents->push_back(c); }
     territories = new std::vector<Territory*>();
-    for (Territory* t : *other.territories) { territories->push_back(t); }
+
+    std::map<const Continent*, Continent*> contMap;
+    for (Continent* oc : *other.continents) {
+        Continent* nc = new Continent(oc->getName(), oc->getBonus());
+        continents->push_back(nc);
+        contMap[oc] = nc;
+    }
+
+    std::map<const Territory*, Territory*> terrMap;
+    for (Territory* ot : *other.territories) {
+        Territory* nt = new Territory(ot->getName());
+        nt->setArmyCount(ot->getArmyCount());
+        territories->push_back(nt);
+        terrMap[ot] = nt;
+    }
+
+    for (Continent* oc : *other.continents) {
+        Continent* nc = contMap[oc];
+        for (Territory* ot : oc->getTerritories()) {
+            Territory* nt = terrMap[ot];
+            nt->setContinent(nc);
+            nc->addTerritory(nt);
+        }
+    }
+
+    for (Territory* ot : *other.territories) {
+        Territory* nt = terrMap[ot];
+        for (Territory* oAdj : ot->getAdjacentTerritories()) {
+            nt->addAdjacentTerritory(terrMap[oAdj]);
+        }
+    }
+
+    // shallow copy owner if desired
+    // for (Territory* ot : *other.territories) terrMap[ot]->setOwner(ot->getOwner());
+
     return *this;
 }
+
 std::ostream& operator<<(std::ostream& os, const Map& map) {
     os << "Map contains " << map.territories->size() << " territories and " << map.continents->size() << " continents.";
     return os;
@@ -192,6 +270,7 @@ bool Map::validate() {
     for(Territory* t : *territories){
         if(t->getContinent() == nullptr){
             std::cout << "Validation Error: Territory " << t->getName() << " does not belong to any continent." << std::endl;
+
             return false;
         }
     }
@@ -209,6 +288,12 @@ MapLoader::~MapLoader() {}
 void toLower(std::string& str) {
     std::transform(str.begin(), str.end(), str.begin(),
                    [](unsigned char c){ return std::tolower(c); });
+}
+MapLoader::MapLoader(const MapLoader& other) = default;
+MapLoader& MapLoader::operator=(const MapLoader& other) = default;
+
+std::ostream& operator<<(std::ostream& os, const MapLoader& /*loader*/) {
+    return os << "MapLoader(Conquest format)";
 }
 
 Map* MapLoader::loadMap(const std::string& filename) {

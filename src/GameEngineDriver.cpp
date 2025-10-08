@@ -46,7 +46,7 @@ void testGameStates() {
         if (it != transitions.end()) {
             
             (game.*(it->second))();
-            cout << "--> Current State: " << stateName[static_cast<int>(game.getCurrentState())] << endl;
+            cout << "--> Current State: " << stateToString(game.getCurrentState()) << '\n';
         } else {
             cout << "Error: Unknown command. Please try again." << endl;
         }

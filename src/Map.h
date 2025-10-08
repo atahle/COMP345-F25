@@ -115,6 +115,11 @@ private:
 class MapLoader {
 public:
     MapLoader();
+    MapLoader(const MapLoader& other);
+    MapLoader& operator=(const MapLoader& other);
     ~MapLoader();
+
     Map* loadMap(const std::string& filename);
+
+    friend std::ostream& operator<<(std::ostream& os, const MapLoader& loader);
 };

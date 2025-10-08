@@ -5,34 +5,30 @@
 #include "Cards.h"
 using namespace std;
 
-Player::Player(const string &playerName)
+Player::Player(const string& playerName)
 {
     name = new string(playerName);
-    territories = new vector<Territory *>();
-    orders = new vector<Order *>();
+    territories = new vector<Territory*>();
+    orders = new OrdersList();     // <-- was: new vector<Order *>()
     hand = new Hand();
 }
 
-Player::Player(const Player &other)
+
+Player::Player(const Player& other)
 {
     name = new string(*other.name);
-    territories = new vector<Territory *>();
-    for (Territory *t : *other.territories)
-    {
-        territories->push_back(t);
+    territories = new vector<Territory*>();
+    for (Territory* t : *other.territories) {
+        territories->push_back(t);     // shallow copy of pointers is fine here
     }
     hand = new Hand(*other.hand);
-    orders = new vector<Order *>();
-    for (Order *o : *other.orders)
-    {
-        orders->push_back(o);
-    }
+    orders = new OrdersList(*other.orders);   // <-- deep copy via OrdersList
 }
 
-Player &Player::operator=(const Player &other)
+
+Player& Player::operator=(const Player& other)
 {
-    if (this == &other)
-        return *this; // Self-assignment check
+    if (this == &other) return *this;
 
     delete name;
     delete territories;
@@ -40,28 +36,25 @@ Player &Player::operator=(const Player &other)
     delete hand;
 
     name = new string(*other.name);
-    territories = new vector<Territory *>();
-    for (Territory *t : *other.territories)
-    {
+    territories = new vector<Territory*>();
+    for (Territory* t : *other.territories) {
         territories->push_back(t);
     }
     hand = new Hand(*other.hand);
-    orders = new vector<Order *>();
-    for (Order *o : *other.orders)
-    {
-        orders->push_back(o);
-    }
+    orders = new OrdersList(*other.orders);   // <-- deep copy
 
     return *this;
 }
+
 
 Player::~Player()
 {
     delete name;
     delete territories;
-    delete orders;
+    delete orders;  // OrdersList dtor deletes contained Order* safely
     delete hand;
 }
+
 
 void Player::addTerritory(Territory *t)
 {
@@ -87,15 +80,14 @@ const vector<Territory *> &Player::getTerritories() const
     return *territories;
 }
 
-ostream &operator<<(ostream &out, const Player &p)
+std::ostream& operator<<(std::ostream& out, const Player& p)
 {
     out << "Player " << *p.name << " owns territories: ";
-    for (Territory *t : *p.territories)
-    {
-        out << t->getName() << " ";
-    }
+    for (Territory* t : *p.territories) out << t->getName() << ' ';
+    out << " | hand: (present) | orders: " << p.getOrders().size();
     return out;
 }
+
 
 vector<Territory *> Player::toDefend()
 {
@@ -119,26 +111,22 @@ vector<Territory *> Player::toAttack()
     return attackable;
 }
 
-void Player::issueOrder(const std::string &type)
+void Player::issueOrder(const std::string& type)
 {
-    Order *o = nullptr;
+    Order* o = nullptr;
 
-    if (type == "deploy")
-        o = new Deploy();
-    else if (type == "advance")
-        o = new Advance();
-    else if (type == "bomb")
-        o = new Bomb();
-    else if (type == "blockade")
-        o = new Blockade();
-    else if (type == "airlift")
-        o = new Airlift();
-    else if (type == "negotiate")
-        o = new Negotiate();
-    else
-    {
-        o = new Advance();
-    }
+    if (type == "deploy")      o = new Deploy();
+    else if (type == "advance") o = new Advance();
+    else if (type == "bomb")    o = new Bomb();
+    else if (type == "blockade")o = new Blockade();
+    else if (type == "airlift") o = new Airlift();
+    else if (type == "negotiate") o = new Negotiate();
+    else                        o = new Advance();
 
-    orders->push_back(o);
+    orders->add(o);    // <-- changed from orders->push_back(o);
+}
+
+
+const OrdersList& Player::getOrders() const {
+    return *orders;
 }

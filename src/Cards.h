@@ -17,7 +17,7 @@ private:
     CardType type;
 
 public:
-    // Constructors
+    
     Card(CardType t);
     Card(const Card& other);
     Card(Card&& other) noexcept;

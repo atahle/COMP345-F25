@@ -6,64 +6,76 @@
 #include "Player.h"
 using namespace std;
 
+const char* stateToString(GameState s) {
+	switch (s) {
+	case GameState::Start:               return "Start";
+	case GameState::MapLoaded:           return "MapLoaded";
+	case GameState::MapValidated:        return "MapValidated";
+	case GameState::PlayersAdded:        return "PlayersAdded";
+	case GameState::AssignReinforcement: return "AssignReinforcement";
+	case GameState::IssueOrders:         return "IssueOrders";
+	case GameState::ExecuteOrders:       return "ExecuteOrders";
+	case GameState::Win:                 return "Win";
+	}
+	return "Unknown";
+}
+
+GameState GameEngine::getCurrentState() const { return gameState; }
+
+
+GameEngine::GameEngine()
+	: gameState(GameState::Start),
+	map(nullptr),
+	players(new std::vector<Player*>()) {
+}
+
 GameEngine::~GameEngine() {
 	delete map;
+	if (players) {
+		for (Player* p : *players) delete p;
+		delete players;
+	}
 }
 
-GameEngine::GameEngine() {
-
-}
-
-GameEngine::GameEngine(const GameEngine& other) {
-	if (other.map != nullptr) {
-		this->map = new Map(*other.map);
+GameEngine::GameEngine(const GameEngine& other)
+	: gameState(other.gameState) {
+	map = other.map ? new Map(*other.map) : nullptr;
+	players = new std::vector<Player*>();
+	if (other.players) {
+		for (Player* op : *other.players) players->push_back(new Player(*op));
 	}
-	else {
-		this->map = nullptr;
-	}
-
-	this->gameState = other.gameState;
-	this->players = other.players;
 }
 
 GameEngine& GameEngine::operator=(const GameEngine& other) {
-	if (this == &other) {
-		return *this;
-	}
+	if (this == &other) return *this;
 
 	delete map;
+	if (players) {
+		for (Player* p : *players) delete p;
+		delete players;
+	}
 
 	gameState = other.gameState;
-	players = other.players;
-
-	if (other.map) {
-		map = new Map(*other.map);
+	map = other.map ? new Map(*other.map) : nullptr;
+	players = new std::vector<Player*>();
+	if (other.players) {
+		for (Player* op : *other.players) players->push_back(new Player(*op));
 	}
-	else {
-		map = nullptr;
-	}
-
-	
 	return *this;
 }
 
+
 ostream& operator<<(std::ostream& out, const GameEngine& ge) {
-	out << "  State: " << stateName[static_cast<int>(ge.getCurrentState())] << "\n";
+	out << stateToString(ge.getCurrentState()) << "\n";
 	out << "  Map: ";
-	if (ge.map) {
-		out << "Loaded (Address: " << ge.map << ")\n";
-	}
-	else {
-		out << "Not Loaded\n";
-	}
+	if (ge.map) out << "Loaded (Address: " << ge.map << ")\n";
+	else        out << "Not Loaded\n";
 
-	out << "  Players (" << ge.players.size() << "): \n";
-	if (!ge.players.empty()) {
-		for (const auto& player : ge.players) {
-			out << "- " << player << "\n";
-		}
+	size_t n = ge.players ? ge.players->size() : 0;
+	out << "  Players (" << n << "): \n";
+	if (ge.players) {
+		for (const Player* p : *ge.players) out << "- " << *p << "\n";
 	}
-
 	return out;
 }
 
@@ -119,32 +131,29 @@ void GameEngine::validateMap() {
 }
 
 void GameEngine::addPlayer() {
-	cout << "Adding players..." << endl;
-	bool doneFlag = false;
-	string inputStr ;
+	std::cout << "Adding players..." << std::endl;
+	std::string inputStr;
 
-	while (!doneFlag) {
-		cout << "Enter the name of player #"<< players.size() + 1 << ". Enter 'done' if you are done" << endl;
-		getline(cin, inputStr);
-		if (inputStr != "done" && !inputStr.empty()) {
-			players.emplace_back(inputStr);
+	while (true) {
+		std::cout << "Enter the name of player #"
+			<< (players ? players->size() + 1 : 1)
+			<< ". Enter 'done' if you are done\n";
+		std::getline(std::cin, inputStr);
+
+		if (inputStr == "done") {
+			if (players && players->size() >= 2) break;
+			std::cout << "you must have at least 2 players\n";
+			continue;
 		}
-		else if (players.size() < 2){
-			cout << "you must have at least 2 players" << endl;
-		}
-		else {
-			break;
+		if (!inputStr.empty()) {
+			players->push_back(new Player(inputStr));
 		}
 	}
 
-	if (players.empty()) {
-
-	}
-
-	cout << "Players added";
-
+	std::cout << "Players added";
 	gameState = GameState::PlayersAdded;
 }
+
 
 void GameEngine::assignCountries() {
 	cout << "Assigning countries..." << endl;

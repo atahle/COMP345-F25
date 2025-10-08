@@ -1,6 +1,8 @@
-#include <iostream>
+#include "Orders.h" 
 #include "Player.h"
 #include "Map.h"
+#include <iostream>
+
 
 void testPlayers()
 {
@@ -40,6 +42,7 @@ void testPlayers()
     p1.issueOrder("deploy");
     p1.issueOrder("advance");
     std::cout << "After issuing orders to p1: " << p1 << std::endl;
+    std::cout << p1.getOrders() << std::endl;
 
     std::cout << "----- End of Player Class Tests -----" << std::endl;
 }

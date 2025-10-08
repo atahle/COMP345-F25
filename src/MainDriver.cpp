@@ -7,7 +7,7 @@
 
 int main() {
 
-    std::cout << "🚀 Starting Warzone Game C++ Project Tests 🚀\n";
+    std::cout << " Starting Warzone Game C++ Project Tests \n";
     int choice = -1;
 
     do {
@@ -16,6 +16,7 @@ int main() {
         std::cout << "  [3] - Run testOrdersLists\n";
         std::cout << "  [4] - Run testCards\n";
         std::cout << "  [5] - Run testGameStates\n";
+        std::cout << "  [6] - Run ALL tests (sequential)\n";
         std::cout << "  [0] - Quit Program\n";
         std::cout << "---------------------------------------\n";
         std::cout << "Enter your choice (0-5): ";
@@ -42,6 +43,14 @@ int main() {
             testCards();
             break;
         case 5:
+            testGameStates();
+            break;
+        case 6:
+            std::cout << "\n[Running all tests...]\n";
+            testLoadMaps();
+            testPlayers();
+            testOrdersLists();
+            testCards();
             testGameStates();
             break;
         case 0:
