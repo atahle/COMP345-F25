@@ -12,6 +12,7 @@ Player::Player(const string& playerName)
     territories = new vector<Territory*>();
     orders = new OrdersList();
     hand = new Hand();
+    reinforcementPool = new int(0);
 }
 
 // Copy constructor: performs a deep copy of owned data
@@ -24,6 +25,7 @@ Player::Player(const Player& other)
 
     hand = new Hand(*other.hand);
     orders = new OrdersList(*other.orders);
+    reinforcementPool = new int(*other.reinforcementPool);
 }
 
 // Assignment operator: safely replaces this player's data with another's
@@ -35,6 +37,7 @@ Player& Player::operator=(const Player& other)
     delete territories;
     delete orders;
     delete hand;
+    delete reinforcementPool;
 
     name = new string(*other.name);
     territories = new vector<Territory*>();
@@ -43,6 +46,7 @@ Player& Player::operator=(const Player& other)
 
     hand = new Hand(*other.hand);
     orders = new OrdersList(*other.orders);
+    reinforcementPool = new int(*other.reinforcementPool);
 
     return *this;
 }
@@ -54,6 +58,7 @@ Player::~Player()
     delete territories;
     delete orders;
     delete hand;
+    delete reinforcementPool;
 }
 
 // Adds a territory to the player if not already owned
@@ -89,7 +94,8 @@ ostream& operator<<(ostream& out, const Player& p)
     out << "Player " << *p.name << " owns territories: ";
     for (Territory* t : *p.territories)
         out << t->getName() << ' ';
-    out << " | hand: (present) | orders: " << p.getOrders().size();
+    out << " | reinforcements: " << p.getReinforcementPool()
+        << " | hand: (present) | orders: " << p.getOrders().size();
     return out;
 }
 
@@ -137,4 +143,30 @@ void Player::issueOrder(const string& type)
 const OrdersList& Player::getOrders() const
 {
     return *orders;
+}
+
+// Returns the player's name
+const string& Player::getName() const
+{
+    return *name;
+}
+
+// Adds the given number of armies to the player's reinforcement pool
+void Player::addReinforcement(int armies)
+{
+    if (reinforcementPool && armies > 0)
+        *reinforcementPool += armies;
+}
+
+// Returns the number of armies in the player's reinforcement pool
+int Player::getReinforcementPool() const
+{
+    return reinforcementPool ? *reinforcementPool : 0;
+}
+
+// Adds the given card to the player's hand
+void Player::addCardToHand(Card* card)
+{
+    if (hand && card)
+        hand->addCard(card);
 }

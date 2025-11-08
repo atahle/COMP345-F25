@@ -6,6 +6,7 @@ using namespace std;
 
 class Order;
 class Hand;
+class Card;
 class OrdersList;   // forward declaration for orders
 
 // Represents a single player in the game
@@ -34,9 +35,18 @@ public:
     // Accessor
     const OrdersList& getOrders() const;             // returns the player’s list of orders
 
+    // Reinforcement
+    const std::string& getName() const;             // returns player name
+    void addReinforcement(int armies);              // increases reinforcement pool by given number of armies
+    int getReinforcementPool() const;               // returns current reinforcement pool value
+
+    // Cards
+    void addCardToHand(Card* card);                 // adds given card to player's hand
+
 private:
     string* name;                        // player's name
     vector<Territory*>* territories;     // list of territories owned by player
     OrdersList* orders;                  // list of player’s orders
     Hand* hand;                          // player’s hand of cards
+    int* reinforcementPool;              // number of reinforcement armies available to player
 };
