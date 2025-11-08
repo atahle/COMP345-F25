@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
-
+#include <limits>
 #include "GameEngine.h"
 
 using namespace std;
@@ -58,3 +58,14 @@ void testGameStates() {
     }
 }
 
+
+void testStartupPhase() {
+    // clear newline from menu input
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    GameEngine engine;
+    engine.startupPhase();
+
+    std::cout << "\n[Engine after startupPhase]\n\n";
+    std::cout << engine << std::endl;
+}
