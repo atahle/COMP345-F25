@@ -51,7 +51,10 @@ public:
     void end();
 
     //state getter
-    GameState getCurrentState() const; 
+    GameState getCurrentState() const;
+    
+    //startup phase
+    void startupPhase();
 };
 
 //state enum -> String

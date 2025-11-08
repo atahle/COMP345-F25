@@ -4,6 +4,11 @@
 #include "GameEngine.h"
 #include "Map.h"
 #include "Player.h"
+#include "Cards.h"
+#include <algorithm>
+#include <random>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
@@ -128,7 +133,7 @@ void GameEngine::loadMap() {
 		}
 	}
 
-	cout << "Map Loaded.";
+	cout << "Map Loaded." << endl;
 	gameState = GameState::MapLoaded;
 }
 
@@ -151,6 +156,10 @@ void GameEngine::addPlayer() {
 	string inputStr;
 
 	while (true) {
+		if (players->size() >= 6) {
+			cout << "Maximum of 6 players reached.\n";
+			break;
+		}
 		cout << "Enter the name of player #"
 			<< (players ? players->size() + 1 : 1)
 			<< ". Enter 'done' if you are done\n";
@@ -166,7 +175,7 @@ void GameEngine::addPlayer() {
 		}
 	}
 
-	cout << "Players added";
+	cout << "Players added\n";
 	gameState = GameState::PlayersAdded;
 }
 
@@ -213,7 +222,69 @@ void GameEngine::win() {
 	else
 	{
 		end();
+	}	
+}
+
+
+// PART 2: Game startup phase IMPLEMENTATION
+
+void GameEngine::startupPhase() {
+	cout << "\n=== STARTUP PHASE ===\n";
+
+	// 1) loadmap <filename>
+	loadMap();
+
+	// 2) validatemap
+	validateMap();
+
+	// 3) addplayer <playername>
+	addPlayer();
+
+	if (!map || !players || players->size() < 2) {
+		cout << "\nStartupPhase aborted: invalid map or not enough players.\n";
+		return;
 	}
 
-	
+	// RNG for shuffles
+	static std::mt19937 rng(static_cast<unsigned int>(time(nullptr)));
+
+	// 4a) distribution of territories
+	vector<Territory*> territoryList = map->getTerritories();
+	if (territoryList.empty()) {
+		cout << "\nStartupPhase aborted: map has no territories.\n";
+		return;
+	}
+
+	std::shuffle(territoryList.begin(), territoryList.end(), rng);
+
+	size_t playerCount = players->size();
+	for (size_t i = 0; i < territoryList.size(); ++i) {
+		Player* owner = players->at(i % playerCount);
+		owner->addTerritory(territoryList[i]);
+	}
+	cout << "Territories distributed to players.\n";
+
+	// 4b) randomize order of play
+	std::shuffle(players->begin(), players->end(), rng);
+
+	cout << "Player order:\n";
+	for (Player* p : *players) {
+		cout << " - " << p->getName() << "\n";
+	}
+
+	// 4c & 4d) give 50 initial armies and 2 cards to each player
+	Deck deck(50);
+	for (Player* p : *players) {
+		p->addReinforcement(50);
+		p->addCardToHand(deck.draw());
+		p->addCardToHand(deck.draw());
+
+		cout << p->getName()
+			<< ": reinforcement pool = " << p->getReinforcementPool()
+			<< ", drew 2 cards.\n";
+	}
+
+	// 4e) switch to play phase
+	gameState = GameState::AssignReinforcement;
+	cout << "\nStartup phase complete. State = AssignReinforcement.\n\n";
 }
