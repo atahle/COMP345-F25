@@ -1,9 +1,13 @@
 #include <iostream>
+#include <limits>
 #include "GameEngineDriver.h"
 #include "CardsDriver.h"
 #include "PlayerDriver.h"
 #include "MapDriver.h"
 #include "OrdersDriver.h"
+#include "CommandProcessing.h"
+
+void testCommandProcessor();
 
 int main() {
 
@@ -58,6 +62,9 @@ int main() {
             testGameStates();
             testStartupPhase();
             break;
+        case 8:                                   
+            testCommandProcessor();
+            break;   
         case 0:
             std::cout << "\n[Program Exit] Thank you for using the menu!\n";
             break;
@@ -72,4 +79,5 @@ int main() {
     std::cout << "\nAll tests have concluded. Exiting program.\n";
 
     return 0;
+
 }
