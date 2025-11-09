@@ -21,4 +21,7 @@ add_executable(MainDriver
     src/Map.cpp
     src/Cards.cpp
     src/Orders.cpp
+    src/CommandProcessing.cpp 
+    src/CommandProcessing.h
+    src/CommandProcessingDriver.cpp
 )
