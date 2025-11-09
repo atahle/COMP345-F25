@@ -3,9 +3,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "GameEngine.h"   // uses GameState and your GameEngine transitions
+#include "GameEngine.h"
 
-// ======================= Command =======================
+// ---------------------- Command ----------------------
 class Command {
 public:
     Command(const std::string& raw = "", const std::string& arg = "");
@@ -13,8 +13,8 @@ public:
     Command& operator=(const Command& other);
     ~Command();
 
-    const std::string& getRaw() const;        // e.g., "loadmap", "addplayer"
-    const std::string& getArg() const;        // e.g., "Earth.map", "Alice"
+    const std::string& getRaw() const;
+    const std::string& getArg() const;
     const std::string& getEffect() const;
 
     void saveEffect(const std::string& eff);
@@ -22,15 +22,15 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Command& c);
 
 private:
-    std::string* raw;      // command keyword
-    std::string* arg;      // optional argument
-    std::string* effect;   // textual effect/result
+    std::string* raw;     // command keyword (e.g., "loadmap")
+    std::string* arg;     // optional argument (e.g., "Canada.map")
+    std::string* effect;  // textual effect/result
 };
 
-// Forward decl for adapter
+// Forward-declare adapter helper
 class FileLineReader;
 
-// ==================== CommandProcessor ====================
+// ---------------------- CommandProcessor ----------------------
 class CommandProcessor {
 public:
     CommandProcessor();
@@ -38,52 +38,28 @@ public:
     CommandProcessor& operator=(const CommandProcessor& other);
     virtual ~CommandProcessor();
 
-    // The GameEngine whose state we validate against and mutate
     void attachEngine(GameEngine* ge);
 
-    // Public API for clients (GameEngine/driver)
-    // Returns the next parsed+stored command (nullptr if none)
+    // Reads one command from the source, stores it, and returns it (nullptr on no input)
     Command* getCommand();
 
-    // Print recorded commands
     friend std::ostream& operator<<(std::ostream& os, const CommandProcessor& cp);
 
 protected:
-    // Read one command from the source (console or file) and store it
+    // Source hook (console by default; file adapter overrides this)
     virtual void readCommand();
 
-    // Split first token as raw command, rest as arg (trimmed)
+    // Parsing + validation + effect helpers
     static void parse(const std::string& line, std::string& outRaw, std::string& outArg);
-
-    // Check if the command is valid **in current state** (table)
-    // If invalid, writes the error into Command::effect
     bool validate(const Command& c) const;
-
-    // Execute (mutate GameEngine state) and set Command::effect
-    // If no GameEngine attached, only writes the effect
     void effect(Command& c);
 
 protected:
-    std::vector<Command*>* history;   // owned
-    GameEngine* engine;                // not owned
+    std::vector<Command*>* history;  // owned
+    GameEngine* engine;              // not owned
 };
 
-// =========== Adapter: FileCommandProcessorAdapter ===========
-class FileCommandProcessorAdapter : public CommandProcessor {
-public:
-    explicit FileCommandProcessorAdapter(const std::string& filename);
-    FileCommandProcessorAdapter(const FileCommandProcessorAdapter& other);
-    FileCommandProcessorAdapter& operator=(const FileCommandProcessorAdapter& other);
-    ~FileCommandProcessorAdapter() override;
-
-protected:
-    void readCommand() override;
-
-private:
-    FileLineReader* flr;   // owned
-};
-
-// ====================== FileLineReader ======================
+// ---------------------- FileLineReader ----------------------
 class FileLineReader {
 public:
     explicit FileLineReader(const std::string& filename);
@@ -96,5 +72,24 @@ public:
 
 private:
     std::string* path;
-    std::istream* in;   // dynamically allocated to satisfy “user-defined -> pointer” rule
+    std::istream* in; // dynamically allocated stream (to honor pointer rule)
 };
+
+// ---------------------- FileCommandProcessorAdapter ----------------------
+class FileCommandProcessorAdapter : public CommandProcessor {
+public:
+    explicit FileCommandProcessorAdapter(const std::string& filename);
+    FileCommandProcessorAdapter(const FileCommandProcessorAdapter& other);
+    FileCommandProcessorAdapter& operator=(const FileCommandProcessorAdapter& other);
+    ~FileCommandProcessorAdapter() override;
+
+protected:
+    void readCommand() override;
+
+private:
+    FileLineReader* flr; // owned
+};
+
+// ---------------------- Driver (free function) ----------------------
+// Required by the rubric: demonstrates console and file modes, and validation.
+void testCommandProcessor();
