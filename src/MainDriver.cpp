@@ -18,7 +18,8 @@ int main() {
         std::cout << "  [4] - Run testCards\n";
         std::cout << "  [5] - Run testGameStates\n";
         std::cout << "  [6] - Run testStartupPhase\n";
-        std::cout << "  [7] - Run ALL tests (sequential)\n";
+		std::cout << "  [7] - Run testMainGameLoop\n";
+        std::cout << "  [12] - Run ALL tests (sequential)\n";
         std::cout << "  [0] - Quit Program\n";
         std::cout << "-----------------------------------------\n";
         std::cout << "Enter your choice (0-7): ";
@@ -48,8 +49,12 @@ int main() {
             testGameStates();
             break;
         case 6: 
-            testStartupPhase(); break;
+            testStartupPhase(); 
+            break;
         case 7:
+            testMainGameLoop();
+            break;
+        case 12:
             std::cout << "\n[Running all tests...]\n";
             testLoadMaps();
             testPlayers();

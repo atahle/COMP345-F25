@@ -6,8 +6,8 @@ void testOrdersLists() {
 
     // adding a few a orders to an order list
     OrdersList list;
-    list.add(new Deploy());
-    list.add(new Advance());
+    //list.add(new Deploy());
+    //list.add(new Advance());
     list.add(new Bomb());
     list.add(new Blockade());
     list.add(new Airlift());

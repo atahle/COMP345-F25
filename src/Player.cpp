@@ -124,19 +124,148 @@ vector<Territory*> Player::toAttack()
 }
 
 // Creates and adds an order of the given type to the player's list
-void Player::issueOrder(const string& type)
+bool Player::issueOrder()
 {
-    Order* o = nullptr;
 
-    if (type == "deploy")        o = new Deploy();
-    else if (type == "advance")  o = new Advance();
-    else if (type == "bomb")     o = new Bomb();
-    else if (type == "blockade") o = new Blockade();
-    else if (type == "airlift")  o = new Airlift();
-    else if (type == "negotiate")o = new Negotiate();
-    else                         o = new Advance();
+    vector<Territory*> defense = toDefend();
+	vector<Territory*> attack = toAttack();
 
-    orders->add(o);
+    if (*reinforcementPool > 0) {
+		cout << *name << ", you have " << *reinforcementPool << " reinforcements available.\n Please select a territory you want to defend \n";
+		printTerritories(defense);
+		int territoryIdx;
+		cin >> territoryIdx;
+        if (territoryIdx < 1 || territoryIdx > defense.size()) {
+            cout << "Invalid choice. Order issuance aborted.\n";
+            return false;
+		}
+
+		cout << "Enter number of reinforcment to deploy to " << defense[territoryIdx - 1]->getName() << ": ";
+		int numReinforcements;
+		cin >> numReinforcements;
+
+        if (numReinforcements <= *reinforcementPool) {
+            *reinforcementPool -= numReinforcements;
+            orders->add(new Deploy(defense[territoryIdx - 1], numReinforcements));
+        }
+        else {
+            cout << "Not enough reinforcement \n";
+        }
+        return false;
+    } else {
+
+	cout << *name << ", select an action:\n";
+	cout << "1. move troops, 2. play a card, 3. pass\n";
+	int choice;
+	cin >> choice;
+
+    switch (choice)
+    {
+    case 1:
+    {
+        cout << "do you want to 1. attack or 2. fortify?\n";
+
+        if (cin >> choice; choice == 1) {
+
+            if (attack.empty()) {
+                cout << "No territories available to attack. Order issuance aborted.\n";
+                return false;
+            }
+            cout << "Select a territory to attack:\n";
+            printTerritories(attack);
+            int attackIdx;
+            cin >> attackIdx;
+            if (attackIdx < 1 || attackIdx > attack.size()) {
+                cout << "Invalid choice. Order issuance aborted.\n";
+                return false;
+            }
+            cout << "Select a territory to move from:\n";
+            printTerritories(defense);
+            int fromIdx;
+            cin >> fromIdx;
+            if (fromIdx < 1 || fromIdx > defense.size()) {
+                cout << "Invalid choice. Order issuance aborted.\n";
+                return false;
+            }
+            cout << "Enter number of troops to move: ";
+            int numTroops;
+            cin >> numTroops;
+            orders->add(new Advance(defense[fromIdx - 1], attack[attackIdx - 1], numTroops));
+            return false;
+        }
+        else if (choice == 2) {
+            cout << "Select a territory to defend:\n";
+            printTerritories(defense);
+            int defenseToIdx;
+            cin >> defenseToIdx;
+            if (defenseToIdx < 1 || defenseToIdx > defense.size()) {
+                cout << "Invalid choice. Order issuance aborted.\n";
+                return false;
+            }
+            cout << "Select a territory to move from:\n";
+            printTerritories(defense);
+            int fromIdx;
+            cin >> fromIdx;
+            if (fromIdx < 1 || fromIdx > defense.size()) {
+                cout << "Invalid choice. Order issuance aborted.\n";
+                return false;
+            }
+            cout << "Enter number of troops to move: ";
+            int numTroops;
+            cin >> numTroops;
+            orders->add(new Advance(defense[fromIdx - 1], defense[defenseToIdx - 1], numTroops));
+
+        }
+
+
+        break;
+    }
+    case 2:
+    {
+        if (hand->isEmpty()) {
+            cout << "No cards in hand. Order issuance aborted.\n";
+            return false;
+        }
+        cout << "Select a card to play:\n";
+        cout << *hand;
+        int cardIdx;
+        cin >> cardIdx;
+        Card* selectedCard = hand->removeCard(cardIdx - 1);
+        if (!selectedCard) {
+            cout << "Invalid choice. Order issuance aborted.\n";
+            return false;
+        }
+        Order* order = nullptr;
+
+        switch (selectedCard->getType())
+        {
+        case Card::BOMB:           order = new Bomb(); break;
+        case Card::BLOCKADE:     order = new Blockade(); break;
+        case Card::AIRLIFT:      order = new Airlift(); break;
+        case Card::DIPLOMACY:    order = new Negotiate(); break;
+        }
+
+        orders->add(order);
+
+        break;
+    }
+    case 3: {
+        cout << *name << " has chosen to pass this turn.\n";
+        return true;
+    }
+    default:
+        break;
+    }
+
+    return false;
+
+    }
+}
+
+void Player::printTerritories(vector<Territory*> terrs) {
+    for (int i = 0; i < terrs.size(); i++) {
+        cout << i + 1 << ". " << terrs[i]->getName() << " | ";
+	}
 }
 
 // Returns a reference to the player's list of orders
@@ -144,6 +273,7 @@ const OrdersList& Player::getOrders() const
 {
     return *orders;
 }
+
 
 // Returns the player's name
 const string& Player::getName() const

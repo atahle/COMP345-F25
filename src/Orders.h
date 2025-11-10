@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "Map.h"
 
 //Order
 class Order {
@@ -32,7 +33,7 @@ public:
 //Specific Orders
 class Deploy : public Order {
 public:
-    Deploy();
+    Deploy(Territory* t, int numReinforcement);
     Deploy* clone() const override;
     bool validate() const override;
     void execute() override;
@@ -40,7 +41,7 @@ public:
 
 class Advance : public Order {
 public:
-    Advance();
+    Advance(Territory* from, Territory* to, int numReinforcement);
     Advance* clone() const override;
     bool validate() const override;
     void execute() override;
@@ -90,6 +91,7 @@ public:
     OrdersList& operator=(const OrdersList& other);
     ~OrdersList();
 
+    bool isFirstDeploy() const;
     void add(Order* o);
     void remove(size_t index);
     void move(size_t from, size_t to);

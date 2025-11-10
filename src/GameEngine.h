@@ -6,6 +6,7 @@
 #include <string>
 #include "Map.h"
 #include "Player.h"
+#include "GameEngineDriver.h"
 
 
 // Game States
@@ -55,6 +56,15 @@ public:
     
     //startup phase
     void startupPhase();
+
+	//mainGameLoop
+	void mainGameLoop();
+    
+	void reinforcementPhase();
+	void issueOrdersPhase();
+	void executeOrdersPhase();
+
+	friend void testMainGameLoop();
 };
 
 //state enum -> String

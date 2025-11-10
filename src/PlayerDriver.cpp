@@ -60,8 +60,8 @@ void testPlayers()
     cout << endl;
 
     // Issue some orders and print them
-    p1.issueOrder("deploy");
-    p1.issueOrder("advance");
+    //p1.issueOrder("deploy");
+    //p1.issueOrder("advance");
     cout << "[8] After issuing orders to p1:" << endl;
     cout << p1 << "\n" << endl;
 

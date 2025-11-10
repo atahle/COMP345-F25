@@ -177,7 +177,9 @@ bool Hand::isEmpty() const { return hand.empty(); }
 // Prints all cards in the hand
 ostream& operator<<(ostream& out, const Hand& hand) {
     out << "Hand contains: ";
+    int count = 1;
     for (Card* c : hand.hand)
-        out << *c << " ";
+        out << count << ". " << *c << " ";
+    count++;
     return out;
 }

@@ -3,5 +3,6 @@
 
 void testGameStates();
 void testStartupPhase();
+void testMainGameLoop();
 
 #endif

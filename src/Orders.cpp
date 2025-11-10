@@ -1,4 +1,5 @@
 #include "Orders.h"
+#include "Map.h"
 #include <iomanip>
 //----------------------
 //Order constructor destructor copy assignment
@@ -55,7 +56,7 @@ std::ostream& operator<<(std::ostream& out, const Order& o) {
 //Specific Orders (child of order)
 //----------------------
 
-Deploy::Deploy() : Order("deploy") {}
+Deploy::Deploy(Territory* t, int numReinforcement) : Order("deploy") {}
 Deploy* Deploy::clone() const { return new Deploy(*this); }
 bool Deploy::validate() const { return Order::validate(); }
 void Deploy::execute() {
@@ -65,7 +66,7 @@ void Deploy::execute() {
     }
 }
 
-Advance::Advance() : Order("advance") {}
+Advance::Advance(Territory* from, Territory* to, int numReinforcement) : Order("advance") {}
 Advance* Advance::clone() const { return new Advance(*this); }
 bool Advance::validate() const { return Order::validate(); }
 void Advance::execute() {
@@ -141,6 +142,11 @@ OrdersList::~OrdersList() {
     delete orders;
 }
 
+bool OrdersList::isFirstDeploy() const {
+	if (orders->empty()) return false;
+	if (orders->at(0)->getName() != "deploy") return false;
+    return true;
+}
 
 // Orderlist order management
 void OrdersList::add(Order* o) {

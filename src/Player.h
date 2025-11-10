@@ -30,10 +30,12 @@ public:
     // Player actions
     vector<Territory*> toDefend();                   // returns list of territories to defend
     vector<Territory*> toAttack();                   // returns list of territories to attack
-    void issueOrder(const std::string& type);        // creates and adds an order of the given type
+    bool issueOrder();  // creates and adds an order of the given type
+	void printTerritories(vector<Territory*> terrs); // print a list of territories
 
     // Accessor
     const OrdersList& getOrders() const;             // returns the player’s list of orders
+
 
     // Reinforcement
     const std::string& getName() const;             // returns player name

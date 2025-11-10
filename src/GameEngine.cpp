@@ -5,6 +5,7 @@
 #include "Map.h"
 #include "Player.h"
 #include "Cards.h"
+#include "Orders.h"
 #include <algorithm>
 #include <random>
 #include <cstdlib>
@@ -288,3 +289,140 @@ void GameEngine::startupPhase() {
 	gameState = GameState::AssignReinforcement;
 	cout << "\nStartup phase complete. State = AssignReinforcement.\n\n";
 }
+
+void GameEngine::mainGameLoop() {
+
+	while (gameState != GameState::Win) {
+		
+
+		for (auto it = players->begin(); it != players->end(); /* no increment here */) {
+
+			Player* p = *it; 
+
+			if (p->getTerritories().empty()) {
+				std::cout << "Player: " << p->getName() << " has been eliminated from the game." << std::endl;
+				delete p;
+				it = players->erase(it);
+			}
+			else {
+				++it;
+			}
+		}
+
+		if (players->size() < 2) {
+			cout << "Player: "<< players->at(0)->getName() << " Won the Game";
+
+			break;
+		}
+
+
+		reinforcementPhase();
+		issueOrdersPhase();
+		executeOrdersPhase();
+	}
+
+	win();
+
+}
+
+void GameEngine::reinforcementPhase() {
+
+	// For each player, calculate and assign reinforcements
+	for (Player* p : *players) {
+
+
+
+		int territoryCount = static_cast<int>(p->getTerritories().size());
+		int reinforcements = std::max(3, territoryCount / 3);
+
+		for (Continent* c : map->getContinents()) {
+			bool ownsAll = true;
+			for (Territory* t : c->getTerritories()) {
+				if (t->getOwner() != p) {
+					ownsAll = false;
+					break;
+				}
+			}
+			if (ownsAll) {
+				reinforcements += c->getBonus();
+			}
+		}
+
+		p->addReinforcement(reinforcements);
+
+		cout << p->getName()
+			<< " receives " << reinforcements
+			<< " reinforcements. Total pool: "
+			<< p->getReinforcementPool() << "\n";
+
+	}
+
+	gameState = GameState::IssueOrders;
+}
+
+void GameEngine::issueOrdersPhase() {
+	vector<bool> playersDone(players->size(), false);
+
+
+
+	while (!all_of(playersDone.begin(), playersDone.end(), [](bool v) {return v;})) {
+
+
+
+		for (int i = 0; i < players->size(); i++) {
+			if (playersDone[i]) continue;
+
+			playersDone[i] = players->at(i)->issueOrder();
+
+			
+		}
+
+
+
+	}
+	cout << "All players have issued their orders.\n";
+
+
+
+	gameState = GameState::ExecuteOrders;
+}
+
+
+void GameEngine::executeOrdersPhase() {
+
+	bool deploymentLeft = true;
+	while (deploymentLeft) {
+		deploymentLeft = false;
+		for (Player* p : *players) { 
+			OrdersList ol = p->getOrders();
+			if (ol.size() > 0 && ol.isFirstDeploy()) {
+				deploymentLeft = true;
+				Order* o = const_cast<Order*>(ol.at(0));
+				o->execute();
+				ol.remove(0);
+			}
+		}
+	}
+
+
+	bool ordersRemaining = true;
+	while (ordersRemaining) {
+		ordersRemaining = false;
+		for (Player* p : *players) {
+			OrdersList ol = p->getOrders();
+			if (ol.size() > 0) {
+				ordersRemaining = true;
+				Order* o = const_cast<Order*>(ol.at(0));
+				cout << p->getName() << " is executing order: " << *o << "\n";
+				o->execute();
+				ol.remove(0);
+			}
+		}
+	}
+
+	cout << "All orders executed.\n";
+	gameState = GameState::AssignReinforcement;
+}
+
+
+
