@@ -21,8 +21,9 @@ int main() {
         std::cout << "  [3] - Run testOrdersLists\n";
         std::cout << "  [4] - Run testCards\n";
         std::cout << "  [5] - Run testGameStates\n";
-        std::cout << "  [6] - Run testStartupPhase\n";
-		std::cout << "  [7] - Run testMainGameLoop\n";
+		std::cout << "  [6] - Run testCommandProcessor\n";
+        std::cout << "  [7] - Run testStartupPhase\n";
+		std::cout << "  [8] - Run testMainGameLoop\n";
         std::cout << "  [12] - Run ALL tests (sequential)\n";
         std::cout << "  [0] - Quit Program\n";
         std::cout << "-----------------------------------------\n";
@@ -53,11 +54,16 @@ int main() {
             testGameStates();
             break;
         case 6: 
+			testCommandProcessor();
+			break;
+        case 7: 
             testStartupPhase(); 
             break;
-        case 7:
+        case 8:
             testMainGameLoop();
             break;
+
+
         case 12:
             std::cout << "\n[Running all tests...]\n";
             testLoadMaps();
