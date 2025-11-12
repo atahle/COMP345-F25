@@ -8,6 +8,7 @@ class Order;
 class Hand;
 class Card;
 class OrdersList;   // forward declaration for orders
+class GameEngine;   // forward declaration for issueOrder
 
 // Represents a single player in the game
 class Player
@@ -30,20 +31,29 @@ public:
     // Player actions
     vector<Territory*> toDefend();                   // returns list of territories to defend
     vector<Territory*> toAttack();                   // returns list of territories to attack
-    bool issueOrder();  // creates and adds an order of the given type
-	void printTerritories(vector<Territory*> terrs); // print a list of territories
+    bool issueOrder(GameEngine* game);               // Creates and adds an order (now requires GameEngine)
+    void printTerritories(vector<Territory*> terrs); // print a list of territories
 
     // Accessor
-    const OrdersList& getOrders() const;             // returns the player’s list of orders
+    OrdersList* getOrders();             // (Changed to non-const for GameEngine::executeOrdersPhase)
+    const OrdersList& getOrders() const; // (Overloaded for const contexts)
 
 
     // Reinforcement
     const std::string& getName() const;             // returns player name
-    void addReinforcement(int armies);              // increases reinforcement pool by given number of armies
+    void addReinforcement(int armies);              // increases/decreases reinforcement pool by given number
     int getReinforcementPool() const;               // returns current reinforcement pool value
 
     // Cards
     void addCardToHand(Card* card);                 // adds given card to player's hand
+    Hand* getHand();                                // (Added getter for issueOrder)
+
+    // Part 4: Turn-based effects
+    void setConqueredTerritory(bool value);         //
+    bool getConqueredTerritory() const;
+    void addDiplomaticAlly(Player* otherPlayer);    //
+    bool isDiplomaticAlly(Player* otherPlayer) const;
+    void clearTurnEffects();                        // Clears allies and conquest flag
 
 private:
     string* name;                        // player's name
@@ -51,4 +61,8 @@ private:
     OrdersList* orders;                  // list of player’s orders
     Hand* hand;                          // player’s hand of cards
     int* reinforcementPool;              // number of reinforcement armies available to player
+
+    // Part 4 Data Members
+    bool* conqueredTerritoryThisTurn;
+    vector<Player*>* diplomaticAllies;
 };

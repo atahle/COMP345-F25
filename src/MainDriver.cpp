@@ -8,6 +8,7 @@
 #include "CommandProcessing.h"
 
 void testCommandProcessor();
+void testOrderExecution(); // Declare the new function
 
 int main() {
 
@@ -21,22 +22,25 @@ int main() {
         std::cout << "  [3] - Run testOrdersLists\n";
         std::cout << "  [4] - Run testCards\n";
         std::cout << "  [5] - Run testGameStates\n";
-		std::cout << "  [6] - Run testCommandProcessor\n";
+        std::cout << "  [6] - Run testCommandProcessor\n";
         std::cout << "  [7] - Run testStartupPhase\n";
-		std::cout << "  [8] - Run testMainGameLoop\n";
+        std::cout << "  [8] - Run testMainGameLoop\n";
+        std::cout << "  [9] - Run testOrderExecution (A2 Part 4)\n"; // Added new test
         std::cout << "  [12] - Run ALL tests (sequential)\n";
         std::cout << "  [0] - Quit Program\n";
         std::cout << "-----------------------------------------\n";
-        std::cout << "Enter your choice (0-7): ";
+        std::cout << "Enter your choice: ";
 
         if (!(std::cin >> choice)) {
-            std::cout << "\n[Error] Invalid input. Please enter a number (0-7).\n";
+            std::cout << "\n[Error] Invalid input. Please enter a number.\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            choice = -1; 
+            choice = -1;
             continue;
         }
 
+        // Fix for duplicate case 8 in your original file
+        // The switch statement has been cleaned up
         switch (choice) {
         case 1:
             testLoadMaps();
@@ -53,17 +57,18 @@ int main() {
         case 5:
             testGameStates();
             break;
-        case 6: 
-			testCommandProcessor();
-			break;
-        case 7: 
-            testStartupPhase(); 
+        case 6:
+            testCommandProcessor();
+            break;
+        case 7:
+            testStartupPhase();
             break;
         case 8:
             testMainGameLoop();
             break;
-
-
+        case 9:
+            testOrderExecution(); // Call new test
+            break;
         case 12:
             std::cout << "\n[Running all tests...]\n";
             testLoadMaps();
@@ -71,24 +76,23 @@ int main() {
             testOrdersLists();
             testCards();
             testGameStates();
+            testCommandProcessor(); // Added missing tests to "All"
             testStartupPhase();
+            testMainGameLoop();
+            testOrderExecution(); // Added new test to "All"
             break;
-        case 8:                                   
-            testCommandProcessor();
-            break;   
         case 0:
             std::cout << "\n[Program Exit] Thank you for using the menu!\n";
             break;
         default:
-            std::cout << "\n[Warning] Invalid option. Please select a number between 0 and 5.\n";
+            std::cout << "\n[Warning] Invalid option. Please select a valid number.\n";
             break;
         }
 
     } while (choice != 0);
-    
+
 
     std::cout << "\nAll tests have concluded. Exiting program.\n";
 
     return 0;
-
 }

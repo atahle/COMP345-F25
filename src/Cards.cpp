@@ -174,6 +174,18 @@ Card* Hand::removeCard(int index) {
 // Returns true if hand is empty
 bool Hand::isEmpty() const { return hand.empty(); }
 
+// --- IMPLEMENTATIONS ADDED FOR PART 4 ---
+size_t Hand::size() const {
+    return hand.size();
+}
+
+Card* Hand::getCard(int index) {
+    if (index < 0 || index >= static_cast<int>(hand.size()))
+        return nullptr; // Out of bounds
+    return hand[index]; // Return the card
+}
+// ----------------------------------------
+
 // Prints all cards in the hand
 ostream& operator<<(ostream& out, const Hand& hand) {
     out << "Hand contains: ";

@@ -93,6 +93,11 @@ public:
     // Checks if the hand is empty
     bool isEmpty() const;
 
+    // --- ADDED FOR PART 4 ---
+    size_t size() const; // Returns the number of cards in the hand
+    Card* getCard(int index); // Returns a card without removing it
+    // ------------------------
+
     // Prints all cards in the hand
     friend std::ostream& operator<<(std::ostream& out, const Hand& hand);
 };

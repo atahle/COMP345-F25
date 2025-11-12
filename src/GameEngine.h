@@ -6,6 +6,7 @@
 #include <string>
 #include "Map.h"
 #include "Player.h"
+#include "Cards.h" // Include Cards.h
 #include "GameEngineDriver.h"
 
 
@@ -28,7 +29,10 @@ private:
     //Game General Variables
     GameState gameState{ GameState::Start };
     Map* map{ nullptr };
-    std::vector<Player*>* players{ nullptr };  
+    std::vector<Player*>* players{ nullptr };
+    Deck* deck{ nullptr }; // Part 4
+    Player* neutralPlayer{ nullptr }; // Part 4
+
 public:
 
     //Game Constructor Destructor Copy and Stream
@@ -53,18 +57,25 @@ public:
 
     //state getter
     GameState getCurrentState() const;
-    
+
     //startup phase
     void startupPhase();
 
-	//mainGameLoop
-	void mainGameLoop();
-    
-	void reinforcementPhase();
-	void issueOrdersPhase();
-	void executeOrdersPhase();
+    //mainGameLoop
+    void mainGameLoop();
 
-	friend void testMainGameLoop();
+    void reinforcementPhase();
+    void issueOrdersPhase();
+    void executeOrdersPhase();
+
+    // Part 4: Helpers for Orders
+    Player* getNeutralPlayer() const;
+    std::vector<Player*> getOtherPlayers(Player* p) const;
+    std::vector<Territory*> getAllTerritories() const;
+
+
+    friend void testMainGameLoop();
+    friend void testOrderExecution(); // Give driver access
 };
 
 //state enum -> String
