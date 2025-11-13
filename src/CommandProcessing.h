@@ -90,6 +90,4 @@ private:
     FileLineReader* flr; // owned
 };
 
-// ---------------------- Driver (free function) ----------------------
-// Required by the rubric: demonstrates console and file modes, and validation.
 void testCommandProcessor();
