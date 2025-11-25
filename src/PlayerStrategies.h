@@ -4,7 +4,7 @@
 #include <vector>
 #include <iostream>
 #include "Player.h"
-#include "Territory.h"
+#include "Map.h"
 
 // Abstract Class
 class PlayerStrategy {
