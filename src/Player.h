@@ -21,8 +21,8 @@ public:
     ~Player();                              // destructor
 
     // Territory management
-    void addTerritory(Territory* t);                 // adds a territory to player’s control
-    void removeTerritory(Territory* t);              // removes a territory from player’s control
+    void addTerritory(Territory* t);                 // adds a territory to playerâ€™s control
+    void removeTerritory(Territory* t);              // removes a territory from playerâ€™s control
     const vector<Territory*>& getTerritories() const;// returns list of owned territories
 
     // Output stream
@@ -58,11 +58,31 @@ public:
 private:
     string* name;                        // player's name
     vector<Territory*>* territories;     // list of territories owned by player
-    OrdersList* orders;                  // list of player’s orders
-    Hand* hand;                          // player’s hand of cards
+    OrdersList* orders;                  // list of playerâ€™s orders
+    Hand* hand;                          // playerâ€™s hand of cards
     int* reinforcementPool;              // number of reinforcement armies available to player
 
     // Part 4 Data Members
     bool* conqueredTerritoryThisTurn;
     vector<Player*>* diplomaticAllies;
+
+private:
+    PlayerStrategy* strategy; // Pointer
+
+public:
+    // Constructor
+    Player();
+    ~Player(); // Destructor
+    Player(const Player& other);
+    Player& operator=(const Player& other);
+
+    // Stream insertion
+    friend std::ostream& operator<<(std::ostream& os, const Player& player);
+
+    // Strategy methods
+    void setStrategy(PlayerStrategy* newStrategy);
+    void issueOrder();
+    std::vector<Territory*> toAttack();
+    std::vector<Territory*> toDefend();
+
 };
