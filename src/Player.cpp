@@ -425,3 +425,34 @@ void Player::clearTurnEffects() {
     conqueredTerritoryThisTurn = new bool(false); // Create new one
     diplomaticAllies->clear();
 }
+
+Player::Player() : strategy(nullptr) {}
+Player::~Player() { delete strategy; }
+
+Player::Player(const Player& other) {
+    // Deep copy strategy if exists (optional placeholder)
+    strategy = other.strategy ? other.strategy : nullptr;
+}
+Player& Player::operator=(const Player& other) {
+    if (this != &other) {
+        delete strategy;
+        strategy = other.strategy ? other.strategy : nullptr;
+    }
+    return *this;
+}
+
+std::ostream& operator<<(std::ostream& os, const Player& player) {
+    os << "Player with strategy at: " << player.strategy;
+    return os;
+}
+
+void Player::setStrategy(PlayerStrategy* newStrategy) {
+    if (strategy) delete strategy;
+    strategy = newStrategy;
+}
+
+void Player::issueOrder() { if (strategy) strategy->issueOrder(this); }
+std::vector<Territory*> Player::toAttack() { return strategy ? strategy->toAttack(this) : std::vector<Territory*>(); 
+                                           }
+std::vector<Territory*> Player::toDefend() { return strategy ? strategy->toDefend(this) : std::vector<Territory*>(); 
+                                           }
