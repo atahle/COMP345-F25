@@ -8,7 +8,8 @@
 #include "CommandProcessing.h"
 
 void testCommandProcessor();
-void testOrderExecution(); // Declare the new function
+void testOrderExecution();
+void testPlayerStrategies(); // Declare new function (A3 Part 1)
 
 int main() {
 
@@ -25,7 +26,8 @@ int main() {
         std::cout << "  [6] - Run testCommandProcessor\n";
         std::cout << "  [7] - Run testStartupPhase\n";
         std::cout << "  [8] - Run testMainGameLoop\n";
-        std::cout << "  [9] - Run testOrderExecution (A2 Part 4)\n"; // Added new test
+        std::cout << "  [9] - Run testOrderExecution (A2 Part 4)\n";
+        std::cout << "  [10] - Run testPlayerStrategies (A3 Part 1)\n";
         std::cout << "  [12] - Run ALL tests (sequential)\n";
         std::cout << "  [0] - Quit Program\n";
         std::cout << "-----------------------------------------\n";
@@ -39,8 +41,6 @@ int main() {
             continue;
         }
 
-        // Fix for duplicate case 8 in your original file
-        // The switch statement has been cleaned up
         switch (choice) {
         case 1:
             testLoadMaps();
@@ -67,7 +67,9 @@ int main() {
             testMainGameLoop();
             break;
         case 9:
-            testOrderExecution(); // Call new test
+            testOrderExecution(); 
+        case 10:
+            testPlayerStrategies(); // Added case (A3 Part 1) 
             break;
         case 12:
             std::cout << "\n[Running all tests...]\n";
@@ -76,10 +78,11 @@ int main() {
             testOrdersLists();
             testCards();
             testGameStates();
-            testCommandProcessor(); // Added missing tests to "All"
+            testCommandProcessor();
             testStartupPhase();
             testMainGameLoop();
-            testOrderExecution(); // Added new test to "All"
+            testOrderExecution();
+            testPlayerStrategies(); // Added test call (A3 Part 1) 
             break;
         case 0:
             std::cout << "\n[Program Exit] Thank you for using the menu!\n";

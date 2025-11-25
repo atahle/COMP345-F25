@@ -2,6 +2,9 @@
 #include "Player.h"
 
 void testPlayerStrategies() {
+
+    std::cout << "\nRunning testPlayerStrategies:\n\n";
+
     Player* human = new Player();
     Player* aggressive = new Player();
     Player* benevolent = new Player();
@@ -33,4 +36,6 @@ void testPlayerStrategies() {
     delete benevolent;
     delete neutral;
     delete cheater;
+
+    std::cout << "\nCompleted testPlayerStrategies.\n\n";
 }
