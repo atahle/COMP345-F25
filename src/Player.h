@@ -4,6 +4,7 @@
 #include "Map.h"
 using namespace std;
 
+class PlayerStrategy; // forward declaration for strategy
 class Order;
 class Hand;
 class Card;
@@ -15,6 +16,7 @@ class Player
 {
 public:
     // Constructors / Destructor
+    Player();                             // create a default player (used in strategy driver)
     Player(const string& name);             // create a player with a name
     Player(const Player& other);            // copy constructor
     Player& operator=(const Player& other); // assignment operator
@@ -32,6 +34,7 @@ public:
     vector<Territory*> toDefend();                   // returns list of territories to defend
     vector<Territory*> toAttack();                   // returns list of territories to attack
     bool issueOrder(GameEngine* game);               // Creates and adds an order (now requires GameEngine)
+    void issueOrder();                               // Strategy-based (delegates to PlayerStrategy)
     void printTerritories(vector<Territory*> terrs); // print a list of territories
 
     // Accessor
@@ -55,6 +58,9 @@ public:
     bool isDiplomaticAlly(Player* otherPlayer) const;
     void clearTurnEffects();                        // Clears allies and conquest flag
 
+    // Strategy methods
+    void setStrategy(PlayerStrategy* newStrategy);
+
 private:
     string* name;                        // player's name
     vector<Territory*>* territories;     // list of territories owned by player
@@ -65,24 +71,5 @@ private:
     // Part 4 Data Members
     bool* conqueredTerritoryThisTurn;
     vector<Player*>* diplomaticAllies;
-
-private:
-    PlayerStrategy* strategy; // Pointer
-
-public:
-    // Constructor
-    Player();
-    ~Player(); // Destructor
-    Player(const Player& other);
-    Player& operator=(const Player& other);
-
-    // Stream insertion
-    friend std::ostream& operator<<(std::ostream& os, const Player& player);
-
-    // Strategy methods
-    void setStrategy(PlayerStrategy* newStrategy);
-    void issueOrder();
-    std::vector<Territory*> toAttack();
-    std::vector<Territory*> toDefend();
-
+    PlayerStrategy* strategy;            // Strategy pointer
 };

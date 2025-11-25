@@ -5,6 +5,7 @@
 #include "Orders.h"
 #include "Cards.h"
 #include "GameEngine.h" // Needed for issueOrder to find other players
+#include "PlayerStrategies.h"
 using namespace std;
 
 // Constructor: creates a new player
@@ -17,7 +18,11 @@ Player::Player(const string& playerName)
     reinforcementPool = new int(0);
     conqueredTerritoryThisTurn = new bool(false); // Part 4
     diplomaticAllies = new vector<Player*>();   // Part 4
+    strategy = nullptr;
 }
+
+// Default constructor for Player strategy tests
+Player::Player() : Player("Unnamed") {}
 
 // Copy constructor: performs a deep copy of owned data
 Player::Player(const Player& other)
@@ -32,6 +37,7 @@ Player::Player(const Player& other)
     reinforcementPool = new int(*other.reinforcementPool);
     conqueredTerritoryThisTurn = new bool(*other.conqueredTerritoryThisTurn); // Part 4
     diplomaticAllies = new vector<Player*>(*other.diplomaticAllies);         // Part 4
+    strategy = nullptr;
 }
 
 // Assignment operator: safely replaces this player's data with another's
@@ -46,6 +52,7 @@ Player& Player::operator=(const Player& other)
     delete reinforcementPool;
     delete conqueredTerritoryThisTurn; // Part 4
     delete diplomaticAllies;           // Part 4
+    delete strategy;
 
     name = new string(*other.name);
     territories = new vector<Territory*>();
@@ -57,6 +64,7 @@ Player& Player::operator=(const Player& other)
     reinforcementPool = new int(*other.reinforcementPool);
     conqueredTerritoryThisTurn = new bool(*other.conqueredTerritoryThisTurn); // Part 4
     diplomaticAllies = new vector<Player*>(*other.diplomaticAllies);         // Part 4
+    strategy = nullptr;
 
     return *this;
 }
@@ -71,6 +79,7 @@ Player::~Player()
     delete reinforcementPool;
     delete conqueredTerritoryThisTurn; // Part 4
     delete diplomaticAllies;           // Part 4
+    delete strategy;
 }
 
 // Adds a territory to the player if not already owned
@@ -120,12 +129,14 @@ ostream& operator<<(ostream& out, const Player& p)
 // Returns a list of territories the player should defend
 vector<Territory*> Player::toDefend()
 {
+    if (strategy) return strategy->toDefend(this);
     return *territories; // For now, defend all
 }
 
 // Returns a list of territories the player can attack
 vector<Territory*> Player::toAttack()
 {
+    if (strategy) return strategy->toAttack(this);
     vector<Territory*> attackable;
     for (Territory* t : *territories)
     {
@@ -426,33 +437,11 @@ void Player::clearTurnEffects() {
     diplomaticAllies->clear();
 }
 
-Player::Player() : strategy(nullptr) {}
-Player::~Player() { delete strategy; }
-
-Player::Player(const Player& other) {
-    // Deep copy strategy if exists (optional placeholder)
-    strategy = other.strategy ? other.strategy : nullptr;
-}
-Player& Player::operator=(const Player& other) {
-    if (this != &other) {
-        delete strategy;
-        strategy = other.strategy ? other.strategy : nullptr;
-    }
-    return *this;
-}
-
-std::ostream& operator<<(std::ostream& os, const Player& player) {
-    os << "Player with strategy at: " << player.strategy;
-    return os;
-}
-
 void Player::setStrategy(PlayerStrategy* newStrategy) {
     if (strategy) delete strategy;
     strategy = newStrategy;
 }
 
-void Player::issueOrder() { if (strategy) strategy->issueOrder(this); }
-std::vector<Territory*> Player::toAttack() { return strategy ? strategy->toAttack(this) : std::vector<Territory*>(); 
-                                           }
-std::vector<Territory*> Player::toDefend() { return strategy ? strategy->toDefend(this) : std::vector<Territory*>(); 
-                                           }
+void Player::issueOrder() {
+    if (strategy) strategy->issueOrder(this);
+}
