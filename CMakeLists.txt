@@ -17,6 +17,7 @@ add_executable(MainDriver
     src/OrdersDriver.cpp
     src/CommandProcessingDriver.cpp
     src/PlayerStrategiesDriver.cpp
+    src/TournamentDriver.cpp
 
     src/GameEngine.cpp 
     src/Player.cpp

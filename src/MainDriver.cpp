@@ -10,6 +10,7 @@
 void testCommandProcessor();
 void testOrderExecution();
 void testPlayerStrategies(); // Declare new function (A3 Part 1)
+void testTournament();
 
 int main() {
 
@@ -28,7 +29,8 @@ int main() {
         std::cout << "  [8] - Run testMainGameLoop\n";
         std::cout << "  [9] - Run testOrderExecution (A2 Part 4)\n";
         std::cout << "  [10] - Run testPlayerStrategies (A3 Part 1)\n";
-        std::cout << "  [12] - Run ALL tests (sequential)\n";
+        std::cout << "  [11] - Run testTournament (A3 Part 2)\n";
+        std::cout << "  [15] - Run ALL tests (sequential)\n";
         std::cout << "  [0] - Quit Program\n";
         std::cout << "-----------------------------------------\n";
         std::cout << "Enter your choice: ";
@@ -68,10 +70,13 @@ int main() {
             break;
         case 9:
             testOrderExecution(); 
+            break;
         case 10:
             testPlayerStrategies(); // Added case (A3 Part 1) 
             break;
-        case 12:
+        case 11:
+            testTournament();
+        case 15:
             std::cout << "\n[Running all tests...]\n";
             testLoadMaps();
             testPlayers();

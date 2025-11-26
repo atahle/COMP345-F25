@@ -67,6 +67,7 @@ public:
     void reinforcementPhase();
     void issueOrdersPhase();
     void executeOrdersPhase();
+    void startTournament(std::vector<std::string> maps, std::vector<std::string> strategies, int numGames, int maxTurns);
 
     // Part 4: Helpers for Orders
     Player* getNeutralPlayer() const;

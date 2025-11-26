@@ -21,9 +21,12 @@ void testCommandProcessor() {
     GameEngine ge;
     ge.play(); // Start
 
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cout << "Choose mode:\n";
     std::cout << "  - Type '-console' for console input\n";
     std::cout << "  - Or type '-file <path>' to execute a file of commands\n> ";
+
 
     std::string modeLine;
     std::getline(std::cin, modeLine);

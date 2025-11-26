@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -6,10 +7,12 @@
 #include "Player.h"
 #include "Cards.h"
 #include "Orders.h"
+#include "PlayerStrategies.h"
 #include <algorithm>
 #include <random>
 #include <cstdlib>
 #include <ctime>
+
 
 using namespace std;
 
@@ -40,8 +43,8 @@ GameEngine::GameEngine()
 	: gameState(GameState::Start),
 	map(nullptr),
 	players(new vector<Player*>()),
-	deck(new Deck(50)), // Part 4
-	neutralPlayer(new Player("Neutral")) // Part 4
+	deck(new Deck(50)), 
+	neutralPlayer(new Player("Neutral")) 
 {
 }
 
@@ -51,8 +54,8 @@ GameEngine::~GameEngine() {
 		for (Player* p : *players) delete p;
 		delete players;
 	}
-	delete deck; // Part 4
-	delete neutralPlayer; // Part 4
+	delete deck;
+	delete neutralPlayer;
 }
 
 GameEngine::GameEngine(const GameEngine& other)
@@ -62,8 +65,8 @@ GameEngine::GameEngine(const GameEngine& other)
 	if (other.players) {
 		for (Player* op : *other.players) players->push_back(new Player(*op));
 	}
-	deck = new Deck(*other.deck); // Part 4
-	neutralPlayer = new Player(*other.neutralPlayer); // Part 4
+	deck = new Deck(*other.deck); 
+	neutralPlayer = new Player(*other.neutralPlayer); 
 }
 
 GameEngine& GameEngine::operator=(const GameEngine& other) {
@@ -74,8 +77,8 @@ GameEngine& GameEngine::operator=(const GameEngine& other) {
 		for (Player* p : *players) delete p;
 		delete players;
 	}
-	delete deck; // Part 4
-	delete neutralPlayer; // Part 4
+	delete deck; 
+	delete neutralPlayer;
 
 	gameState = other.gameState;
 	map = other.map ? new Map(*other.map) : nullptr;
@@ -83,8 +86,8 @@ GameEngine& GameEngine::operator=(const GameEngine& other) {
 	if (other.players) {
 		for (Player* op : *other.players) players->push_back(new Player(*op));
 	}
-	deck = new Deck(*other.deck); // Part 4
-	neutralPlayer = new Player(*other.neutralPlayer); // Part 4
+	deck = new Deck(*other.deck); 
+	neutralPlayer = new Player(*other.neutralPlayer); 
 	return *this;
 }
 
@@ -109,8 +112,6 @@ ostream& operator<<(ostream& out, const GameEngine& ge) {
 //Game Engine Transitions
 //----------------------
 
-// ... (loadMap, validateMap, addPlayer, assignCountries, etc. remain mostly the same) ...
-// ... (Omitted for brevity, as they were not the focus of Part 4) ...
 
 void GameEngine::play() {
 	cout << "Initializing game... " << endl;
@@ -392,6 +393,133 @@ void GameEngine::executeOrdersPhase() {
 
 	cout << "All orders executed.\n";
 	gameState = GameState::AssignReinforcement;
+}
+
+void GameEngine::startTournament(std::vector<std::string> maps, std::vector<std::string> strategies, int numGames, int maxTurns) {
+	std::cout << "\n----------------------------------------" << std::endl;
+	std::cout << "   TOURNAMENT MODE INITIATED" << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
+	std::cout << "M: "; for (auto m : maps) std::cout << m << ", "; std::cout << "\n";
+	std::cout << "P: "; for (auto s : strategies) std::cout << s << ", "; std::cout << "\n";
+	std::cout << "G: " << numGames << "\n";
+	std::cout << "D: " << maxTurns << "\n";
+
+	std::vector<std::vector<std::string>> tournamentResults;
+
+	//iterate maps
+	for (const std::string& mapFile : maps) {
+		std::vector<std::string> mapResults;
+
+		//iterate games
+		for (int g = 1; g <= numGames; ++g) {
+			std::cout << "\n--- Map: " << mapFile << " | Game: " << g << " ---" << std::endl;
+
+			//reset
+			if (map) { delete map; map = nullptr; }
+			if (players) {
+				for (Player* p : *players) delete p;
+				players->clear();
+			}
+			if (deck) { delete deck; deck = new Deck(50); }
+
+
+			// load map
+			MapLoader ml;
+			map = ml.loadMap(mapFile);
+
+			if (map == nullptr || !map->validate()) {
+				std::cout << "CRITICAL: Map " << mapFile << " invalid or failed to load. Skipping." << std::endl;
+				mapResults.push_back("Invalid");
+				continue; 
+			}
+			gameState = GameState::MapValidated;
+
+			//load players
+			int playercount = 1;
+			for (const std::string& stratName : strategies) {
+				Player* p = new Player(stratName + " " + to_string(playercount));
+
+				if (stratName == "Aggressive") p->setStrategy(new AggressivePlayerStrategy());
+				else if (stratName == "Benevolent") p->setStrategy(new BenevolentPlayerStrategy());
+				else if (stratName == "Neutral") p->setStrategy(new NeutralPlayerStrategy());
+				else if (stratName == "Cheater") p->setStrategy(new CheaterPlayerStrategy());
+				else {
+					cout << "Unknown strategy: " << stratName << ". Skipping player creation.\n";
+					delete p;
+					continue;
+				}
+				cout << "Added player: " << p->getName() << " with strategy " << stratName << "\n";
+				players->push_back(p);
+				playercount++;
+			}
+			gameState = GameState::PlayersAdded;
+
+			assignCountries(); 
+
+			// game loop
+			int currentTurn = 0;
+			std::string winner = "Draw";
+
+			while (currentTurn < maxTurns) {
+
+				for (auto it = players->begin(); it != players->end(); ) {
+					if ((*it)->getTerritories().empty()) {
+						it = players->erase(it);
+					}
+					else {
+						++it;
+					}
+				}
+
+				if (players->size() == 1) {
+					winner = players->at(0)->getName();
+					break;
+				}
+				if (players->empty()) {
+					winner = "Error"; 
+					break;
+				}
+
+				std::cout << "Turn " << (currentTurn + 1) << " begins.\n";
+				reinforcementPhase();
+				issueOrdersPhase();
+				executeOrdersPhase();
+
+				currentTurn++;
+			}
+
+			std::cout << "Game ended. Result: " << winner << std::endl;
+			mapResults.push_back(winner);
+		}
+		tournamentResults.push_back(mapResults);
+	}
+
+	// report
+	std::cout << "\n\n";
+	std::cout << "############################################################" << std::endl;
+	std::cout << "#                    TOURNAMENT RESULTS                    #" << std::endl;
+	std::cout << "############################################################" << std::endl;
+
+	std::cout << "M: "; for (auto m : maps) std::cout << m << ", "; std::cout << "\n";
+	std::cout << "P: "; for (auto s : strategies) std::cout << s << ", "; std::cout << "\n";
+	std::cout << "G: " << numGames << "\n";
+	std::cout << "D: " << maxTurns << "\n";
+	std::cout << "\n";
+
+	// Table 
+	std::cout << std::left << std::setw(20) << "Map";
+	for (int i = 1; i <= numGames; ++i) {
+		std::cout << std::left << std::setw(15) << ("Game " + std::to_string(i));
+	}
+	std::cout << "\n";
+
+	for (size_t i = 0; i < maps.size(); ++i) {
+		std::cout << std::left << std::setw(20) << maps[i];
+		for (const std::string& res : tournamentResults[i]) {
+			std::cout << std::left << std::setw(15) << res;
+		}
+		std::cout << "\n";
+	}
 }
 
 // --- Part 4 Helper Implementations ---

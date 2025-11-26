@@ -18,7 +18,21 @@ Player::Player(const string& playerName)
     reinforcementPool = new int(0);
     conqueredTerritoryThisTurn = new bool(false); // Part 4
     diplomaticAllies = new vector<Player*>();   // Part 4
-    strategy = nullptr;
+    strategy = new HumanPlayerStrategy();
+}
+
+Player::Player(const string& playerName, PlayerStrategy* initStrategy)
+{
+    name = new string(playerName);
+    territories = new vector<Territory*>();
+    orders = new OrdersList();
+    hand = new Hand();
+    reinforcementPool = new int(0);
+    conqueredTerritoryThisTurn = new bool(false);
+    diplomaticAllies = new vector<Player*>();
+
+    // Assign the strategy provided
+    this->strategy = initStrategy;
 }
 
 // Default constructor for Player strategy tests
@@ -438,8 +452,10 @@ void Player::clearTurnEffects() {
 }
 
 void Player::setStrategy(PlayerStrategy* newStrategy) {
-    if (strategy) delete strategy;
-    strategy = newStrategy;
+    if (this->strategy != nullptr) {
+        delete this->strategy;
+    }
+    this->strategy = newStrategy;
 }
 
 void Player::issueOrder() {

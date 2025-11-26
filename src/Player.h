@@ -17,6 +17,7 @@ class Player
 public:
     // Constructors / Destructor
     Player();                             // create a default player (used in strategy driver)
+    Player(const string& playerName, PlayerStrategy* initStrategy);
     Player(const string& name);             // create a player with a name
     Player(const Player& other);            // copy constructor
     Player& operator=(const Player& other); // assignment operator

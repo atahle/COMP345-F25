@@ -18,6 +18,19 @@ static std::string tolower_copy(std::string s) {
     return s;
 }
 
+static std::vector<std::string> split(const std::string& s) {
+    std::vector<std::string> tokens;
+    std::stringstream ss(s); // Initialize stringstream with the input string
+    std::string token;
+
+    // Read words (tokens) separated by whitespace
+    while (ss >> token) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+
 // ---------------------- Command ----------------------
 Command::Command(const std::string& r, const std::string& a)
     : raw(new std::string(r)), arg(new std::string(a)), effect(new std::string("")) {}
@@ -135,6 +148,7 @@ bool CommandProcessor::validate(const Command& c) const {
     if (r == "gamestart")         return (s == GameState::PlayersAdded);
     if (r == "replay")            return (s == GameState::Win);
     if (r == "quit")              return (s == GameState::Win);
+	if (r == "tournament")        return (s == GameState::Start) && !c.getArg().empty();
 
     return false;
 }
@@ -147,10 +161,73 @@ void CommandProcessor::effect(Command& c) {
         return;
     }
 
-    // NOTE: Your GameEngine methods are interactive (they prompt).
-    // For the assignment demo, we call them to cause real state transitions.
+ 
     const std::string& r = c.getRaw();
+    if (r == "tournament") {
+        std::vector<std::string> tokens = split(c.getArg());
 
+        std::vector<std::string> maps;
+        std::vector<std::string> strategies;
+        int numGames = 0;
+        int maxTurns = 0;
+
+        std::string currentFlag = "";
+        bool parsingError = false;
+
+        for (const auto& token : tokens) {
+            if (token == "-M" || token == "-P" || token == "-G" || token == "-D") {
+                currentFlag = token;
+                continue;
+            }
+
+            if (currentFlag == "-M") {
+                maps.push_back(token);
+            }
+            else if (currentFlag == "-P") {
+                strategies.push_back(token);
+            }
+            else if (currentFlag == "-G") {
+                try {
+                    numGames = std::stoi(token);
+                }
+                catch (...) { parsingError = true; }
+            }
+            else if (currentFlag == "-D") {
+                try {
+                    maxTurns = std::stoi(token);
+                }
+                catch (...) { parsingError = true; }
+            }
+        }
+
+        std::string errorMsg = "";
+
+        if (parsingError) {
+            errorMsg = "Error: Non-numeric value for games or turns.";
+        }
+        else if (maps.size() < 1 || maps.size() > 5) {
+            errorMsg = "Error: Invalid number of maps (1-5 required).";
+        }
+        else if (strategies.size() < 2 || strategies.size() > 4) {
+            errorMsg = "Error: Invalid number of strategies (2-4 required).";
+        }
+        else if (numGames < 1 || numGames > 5) {
+            errorMsg = "Error: Invalid number of games (1-5 required).";
+        }
+        else if (maxTurns < 10 || maxTurns > 50) {
+            errorMsg = "Error: Invalid max turns (10-50 required).";
+        }
+
+        if (!errorMsg.empty()) {
+            c.saveEffect(errorMsg);
+        }
+        else {
+            engine->startTournament(maps, strategies, numGames, maxTurns);
+            c.saveEffect("Tournament Started.");
+        }
+        return;
+    }
+   
     if (r == "loadmap") {
         c.saveEffect("Map loaded: " + c.getArg());
         engine->loadMap();           // uses your existing prompt
