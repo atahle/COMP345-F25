@@ -481,8 +481,11 @@ void GameEngine::startTournament(std::vector<std::string> maps, std::vector<std:
 				}
 
 				std::cout << "Turn " << (currentTurn + 1) << " begins.\n";
-				reinforcementPhase();
-				issueOrdersPhase();
+				
+				for (Player* p : *players) {
+					p->issueOrder(this);
+				}
+
 				executeOrdersPhase();
 
 				currentTurn++;
