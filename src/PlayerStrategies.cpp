@@ -3,7 +3,6 @@
 // Human Player
 void HumanPlayerStrategy::issueOrder(Player* player) {
     std::cout << "[Human] issueOrder called. Please enter your move (deploy/advance/card): \n";
-    // Here you could implement simple cin input to choose a territory and armies
 }
 std::vector<Territory*> HumanPlayerStrategy::toAttack(Player* player) {
     std::cout << "[Human] toAttack called. Decide which territories to attack.\n";
