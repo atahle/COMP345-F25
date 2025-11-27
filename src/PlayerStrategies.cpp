@@ -177,7 +177,7 @@ std::vector<Territory*> HumanPlayerStrategy::toAttack(Player* player) {
 std::vector<Territory*> HumanPlayerStrategy::toDefend(Player* player) { return  player->getTerritories(); }
 
 // Aggressive Player 
-void AggressivePlayerStrategy::issueOrder(Player* player, GameEngine* game{
+void AggressivePlayerStrategy::issueOrder(Player* player, GameEngine* game){
     std::cout << "[Aggressive] issueOrder called. Deploy/advance on strongest territory.\n";
 }
 std::vector<Territory*> AggressivePlayerStrategy::toAttack(Player* player) {
@@ -282,18 +282,16 @@ void BenevolentPlayerStrategy::issueOrder(Player* player, GameEngine* game) {
 
     if (player->getOrders())
 
-        for (int i = owned.size() - 1; i >= 0; i--) {
+        for (int i = static_cast<int>(owned.size()) - 1; i >= 0; i--) {
             Territory* strongT = owned[i];
             if (strongT->getArmyCount() < 2) continue;
 
             for (Territory* adj : strongT->getAdjacentTerritories()) {
                 if (adj->getOwner() == player && adj->getArmyCount() < strongT->getArmyCount()) {
-
                     int transfer = (strongT->getArmyCount() - adj->getArmyCount()) / 2;
                     if (transfer > 0) {
                         player->addOrder(new Advance(player, strongT, adj, transfer));
                         cout << "[Benevolent] Fortifying " << adj->getName() << " with " << transfer << " armies from " << strongT->getName() << ".\n";
-                            
                     }
                 }
             }
@@ -334,23 +332,40 @@ std::vector<Territory*> NeutralPlayerStrategy::toDefend(Player* player) {
 
 // Cheater Player
 void CheaterPlayerStrategy::issueOrder(Player* player, GameEngine* game) {
-    std::cout << "[Cheater] issueOrder called. Conquer adjacent territories.\n";
-    std::vector<Territory*> newTerritories;
-    for (auto t : player->getTerritories()) {
-        for (auto adj : t->getAdjacentTerritories()) {
+    cout << "\n--- " << player->getName() << ": CHEATER TURN ---\n";
+
+    vector<Territory*> owned = toDefend(player);
+    vector<Territory*> toConquer = toAttack(player);
+
+
+    sort(toConquer.begin(), toConquer.end());
+    toConquer.erase(unique(toConquer.begin(), toConquer.end()), toConquer.end());
+
+    for (Territory* target : toConquer) {
+        cout << "[Cheater] Automatically conquering " << target->getName() << " from "
+            << (target->getOwner() ? target->getOwner()->getName() : "Neutral") << ".\n";
+
+        if (target->getOwner() != nullptr) {
+            target->getOwner()->removeTerritory(target);
+        }
+        target->setOwner(player);
+        player->addTerritory(target);
+    }
+
+}
+
+std::vector<Territory*> CheaterPlayerStrategy::toAttack(Player* player) {
+    vector<Territory*> targets;
+    for (Territory* t : player->getTerritories()) {
+        for (Territory* adj : t->getAdjacentTerritories()) {
             if (adj->getOwner() != player) {
-                adj->setOwner(player);
-                newTerritories.push_back(adj);
-                std::cout << "Cheater conquered: " << adj->getName() << "\n";
+                targets.push_back(adj);
             }
         }
     }
+    return targets;
+}
 
-    for (auto t : newTerritories) player->addTerritory(t);
-}
-std::vector<Territory*> CheaterPlayerStrategy::toAttack(Player* player) {
-    return {}; 
-}
 std::vector<Territory*> CheaterPlayerStrategy::toDefend(Player* player) {
     return player->getTerritories();
 }

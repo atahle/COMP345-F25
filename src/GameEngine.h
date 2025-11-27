@@ -46,6 +46,7 @@ public:
     void loadMap();
     void validateMap();
     void addPlayer();
+	void addPlayer(Player* p);
     void assignCountries();
     void issueOrder();
     void endIssueOrders();

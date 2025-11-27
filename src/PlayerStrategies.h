@@ -53,7 +53,7 @@ public:
 // Cheater Player
 class CheaterPlayerStrategy : public PlayerStrategy {
 public:
-    bool issueOrder(Player* player, GameEngine* game) override;
+    void issueOrder(Player* player, GameEngine* game) override;
     std::vector<Territory*> toAttack(Player* player) override;
     std::vector<Territory*> toDefend(Player* player) override;
 };

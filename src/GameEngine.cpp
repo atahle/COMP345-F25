@@ -175,6 +175,16 @@ void GameEngine::addPlayer() {
 	cout << "Players added\n";
 	gameState = GameState::PlayersAdded;
 }
+
+void GameEngine::addPlayer(Player* p) {
+	if (players->size() < 6) {
+		players->push_back(p);
+	}
+	else {
+		cout << "Cannot add more players, maximum of 6 reached." << endl;
+	}
+}
+
 void GameEngine::assignCountries() {
 	cout << "Assigning countries..." << endl;
 	// 4a) distribution of territories
@@ -482,6 +492,8 @@ void GameEngine::startTournament(std::vector<std::string> maps, std::vector<std:
 
 				std::cout << "Turn " << (currentTurn + 1) << " begins.\n";
 				
+				reinforcementPhase();
+
 				for (Player* p : *players) {
 					p->issueOrder(this);
 				}

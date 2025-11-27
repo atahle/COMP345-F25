@@ -430,8 +430,16 @@ const Order* OrdersList::at(size_t i) const { return orders->at(i); }
 
 std::ostream& operator<<(std::ostream& out, const OrdersList& list) {
     out << "\nOrdersList (" << list.size() << " orders):";
-    for (size_t i = 0; i < list.size(); ++i) {
-        out << "\n  " << (i + 1) << ". " << *list.at(i);
+    if (list.orders->empty()) {
+        out << "[No Orders]";
+        return out;
+    }
+
+    for (size_t i = 0; i < list.orders->size(); ++i) {
+        out << *list.orders->at(i);
+        if (i < list.orders->size() - 1) {
+            out << ", ";
+        }
     }
     return out;
 }
