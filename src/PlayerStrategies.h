@@ -11,14 +11,17 @@ class PlayerStrategy {
 public:
     virtual ~PlayerStrategy() = default;
 
+    // Issue orders for the player
     virtual void issueOrder(Player* player) = 0;
+
+    // Return list of territories the player wants to attack
     virtual std::vector<Territory*> toAttack(Player* player) = 0;
+
+    // Return list of territories the player wants to defend
     virtual std::vector<Territory*> toDefend(Player* player) = 0;
 };
 
-// Concrete Strategies 
-
-// Human Player
+// Human Player Strategy 
 class HumanPlayerStrategy : public PlayerStrategy {
 public:
     void issueOrder(Player* player) override;
@@ -26,7 +29,7 @@ public:
     std::vector<Territory*> toDefend(Player* player) override;
 };
 
-// Aggressive Player
+// Aggressive Player Strategy 
 class AggressivePlayerStrategy : public PlayerStrategy {
 public:
     void issueOrder(Player* player) override;
@@ -34,7 +37,7 @@ public:
     std::vector<Territory*> toDefend(Player* player) override;
 };
 
-// Benevolent Player
+// Benevolent Player Strategy 
 class BenevolentPlayerStrategy : public PlayerStrategy {
 public:
     void issueOrder(Player* player) override;
@@ -42,15 +45,18 @@ public:
     std::vector<Territory*> toDefend(Player* player) override;
 };
 
-// Neutral Player
+// Neutral Player Strategy 
 class NeutralPlayerStrategy : public PlayerStrategy {
 public:
     void issueOrder(Player* player) override;
     std::vector<Territory*> toAttack(Player* player) override;
     std::vector<Territory*> toDefend(Player* player) override;
+
+    // Called if Neutral player is attacked
+    void becomeAggressive(Player* player);
 };
 
-// Cheater Player
+// Cheater Player Strategy
 class CheaterPlayerStrategy : public PlayerStrategy {
 public:
     void issueOrder(Player* player) override;
