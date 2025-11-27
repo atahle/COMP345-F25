@@ -39,6 +39,7 @@ public:
     void printTerritories(vector<Territory*> terrs); // print a list of territories
 
     // Accessor
+	void addOrder(Order* order);          // adds an order to player's order list
     OrdersList* getOrders();             // (Changed to non-const for GameEngine::executeOrdersPhase)
     const OrdersList& getOrders() const; // (Overloaded for const contexts)
 
@@ -74,3 +75,7 @@ private:
     vector<Player*>* diplomaticAllies;
     PlayerStrategy* strategy;            // Strategy pointer
 };
+
+Territory* selectTerritory(const string& prompt, const vector<Territory*>& list);
+int selectArmies(const string& prompt, int max);
+Player* selectPlayer(const string& prompt, const vector<Player*>& list);

@@ -231,156 +231,8 @@ int selectArmies(const string& prompt, int max) {
 // Creates and adds an order to the player's list
 bool Player::issueOrder(GameEngine* game)
 {
-    vector<Territory*> defense = toDefend();
-    vector<Territory*> attack = toAttack();
-
-    // 1. DEPLOYMENT PHASE
-    if (*reinforcementPool > 0) {
-        cout << "\n--- " << *name << ": DEPLOYMENT (" << *reinforcementPool << " remaining) --- \n";
-        Territory* to = selectTerritory("Select territory to reinforce:", defense);
-        if (!to) return false; // Failed to select, try again next loop
-
-        int num = selectArmies("Enter number of armies to deploy:", *reinforcementPool);
-        if (num <= 0) {
-            cout << "Must deploy at least 1 army. Try again.\n";
-            return false;
-        }
-
-        orders->add(new Deploy(this, to, num));
-        *reinforcementPool -= num; // This is now temporary, execute() will pull from pool
-        cout << "Deploy order issued. " << *reinforcementPool << " reinforcements remain.\n";
-        return false; // Still has more to deploy
-    }
-
-    // 2. MAIN ORDER ISSUING PHASE
-    cout << "\n--- " << *name << ": ORDER PHASE --- \n";
-    cout << "Select an action:\n";
-    cout << "  1. Advance (Attack/Move)\n";
-    cout << "  2. Play a Card\n";
-    cout << "  3. Pass (Finish turn)\n";
-    cout << "> ";
-    int choice;
-    cin >> choice;
-
-    if (cin.fail()) {
-        cin.clear();
-        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        cout << "Invalid input.\n";
-        return false;
-    }
-
-    switch (choice)
-    {
-        // --- ADVANCE ---
-    case 1:
-    {
-        cout << "Select action: 1. Attack 2. Move (Fortify)\n> ";
-        cin >> choice;
-        if (cin.fail()) {
-            cin.clear();
-            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            cout << "Invalid input.\n";
-            return false;
-        }
-
-        Territory* from = selectTerritory("Select territory to move FROM:", defense);
-        if (!from) return false;
-
-        Territory* to = nullptr;
-        if (choice == 1) { // Attack
-            to = selectTerritory("Select territory to ATTACK:", attack);
-        }
-        else { // Move
-            to = selectTerritory("Select territory to move TO:", defense);
-        }
-        if (!to) return false;
-
-        int num = selectArmies("Enter number of armies to advance:", from->getArmyCount());
-        if (num <= 0) {
-            cout << "Must advance at least 1 army.\n";
-            return false;
-        }
-
-        orders->add(new Advance(this, from, to, num));
-        cout << "Advance order issued.\n";
-        return false;
-    }
-
-    // --- PLAY CARD ---
-    case 2:
-    {
-        if (hand->isEmpty()) {
-            cout << "No cards in hand.\n";
-            return false;
-        }
-        cout << "Select a card to play:\n";
-        cout << *hand << "\n> ";
-        int cardIdx;
-        cin >> cardIdx;
-
-        Card* selectedCard = hand->getCard(cardIdx - 1); // Peek at card
-        if (!selectedCard) {
-            cout << "Invalid card choice.\n";
-            return false;
-        }
-
-        Order* order = nullptr;
-        switch (selectedCard->getType())
-        {
-        case Card::BOMB: { //
-            cout << "BOMB: Select an enemy territory to bomb.\n";
-            Territory* target = selectTerritory("Select target:", game->getAllTerritories()); // Show all
-            if (!target) return false;
-            order = new Bomb(this, target);
-            break;
-        }
-        case Card::BLOCKADE: { //
-            cout << "BLOCKADE: Select one of your territories to blockade.\n";
-            Territory* target = selectTerritory("Select target:", defense);
-            if (!target) return false;
-            order = new Blockade(this, target);
-            break;
-        }
-        case Card::AIRLIFT: { //
-            cout << "AIRLIFT: Move armies between two of your territories.\n";
-            Territory* from = selectTerritory("Select territory to airlift FROM:", defense);
-            if (!from) return false;
-            Territory* to = selectTerritory("Select territory to airlift TO:", defense);
-            if (!to) return false;
-            int num = selectArmies("Enter number of armies to airlift:", from->getArmyCount());
-            order = new Airlift(this, from, to, num);
-            break;
-        }
-        case Card::DIPLOMACY: { //
-            cout << "DIPLOMACY: Select an enemy player to negotiate with.\n";
-            Player* target = selectPlayer("Select target player:", game->getOtherPlayers(this));
-            if (!target) return false;
-            order = new Negotiate(this, target);
-            break;
-        }
-        case Card::REINFORCEMENT: {
-            cout << "ERROR: Reinforcement card should not exist. (This is a deck-only card).\n";
-            return false;
-        }
-        } // end switch(card)
-
-        if (order) {
-            orders->add(order);
-            hand->removeCard(cardIdx - 1); // Now remove card
-            cout << "Card played and order issued.\n";
-        }
-        return false;
-    }
-
-    // --- PASS ---
-    case 3: {
-        cout << *name << " has finished issuing orders.\n";
-        return true; // Player is done for this turn
-    }
-    default:
-        cout << "Invalid choice.\n";
-        return false;
-    }
+    if (strategy) strategy->issueOrder(this, game);
+	return true;
 }
 
 
@@ -395,6 +247,11 @@ void Player::printTerritories(vector<Territory*> terrs) {
 OrdersList* Player::getOrders() { return orders; }
 const OrdersList& Player::getOrders() const { return *orders; }
 
+void Player::addOrder(Order* order)
+{
+    if (orders && order)
+        orders->add(order);
+}
 
 // Returns the player's name
 const string& Player::getName() const
@@ -458,6 +315,4 @@ void Player::setStrategy(PlayerStrategy* newStrategy) {
     this->strategy = newStrategy;
 }
 
-void Player::issueOrder() {
-    if (strategy) strategy->issueOrder(this);
-}
+

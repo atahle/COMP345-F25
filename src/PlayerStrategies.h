@@ -11,7 +11,7 @@ class PlayerStrategy {
 public:
     virtual ~PlayerStrategy() = default;
 
-    virtual void issueOrder(Player* player) = 0;
+    virtual bool issueOrder(Player* player, GameEngine* game) = 0;
     virtual std::vector<Territory*> toAttack(Player* player) = 0;
     virtual std::vector<Territory*> toDefend(Player* player) = 0;
 };
@@ -21,7 +21,7 @@ public:
 // Human Player
 class HumanPlayerStrategy : public PlayerStrategy {
 public:
-    void issueOrder(Player* player) override;
+    bool issueOrder(Player* player, GameEngine* game) override;
     std::vector<Territory*> toAttack(Player* player) override;
     std::vector<Territory*> toDefend(Player* player) override;
 };
@@ -29,7 +29,7 @@ public:
 // Aggressive Player
 class AggressivePlayerStrategy : public PlayerStrategy {
 public:
-    void issueOrder(Player* player) override;
+    bool issueOrder(Player* player, GameEngine* game) override;
     std::vector<Territory*> toAttack(Player* player) override;
     std::vector<Territory*> toDefend(Player* player) override;
 };
@@ -37,7 +37,7 @@ public:
 // Benevolent Player
 class BenevolentPlayerStrategy : public PlayerStrategy {
 public:
-    void issueOrder(Player* player) override;
+    bool issueOrder(Player* player, GameEngine* game) override;
     std::vector<Territory*> toAttack(Player* player) override;
     std::vector<Territory*> toDefend(Player* player) override;
 };
@@ -45,7 +45,7 @@ public:
 // Neutral Player
 class NeutralPlayerStrategy : public PlayerStrategy {
 public:
-    void issueOrder(Player* player) override;
+    bool issueOrder(Player* player, GameEngine* game) override;
     std::vector<Territory*> toAttack(Player* player) override;
     std::vector<Territory*> toDefend(Player* player) override;
 };
@@ -53,7 +53,7 @@ public:
 // Cheater Player
 class CheaterPlayerStrategy : public PlayerStrategy {
 public:
-    void issueOrder(Player* player) override;
+    bool issueOrder(Player* player, GameEngine* game) override;
     std::vector<Territory*> toAttack(Player* player) override;
     std::vector<Territory*> toDefend(Player* player) override;
 };
