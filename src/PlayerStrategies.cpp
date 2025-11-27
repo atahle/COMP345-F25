@@ -96,14 +96,13 @@ void CheaterPlayerStrategy::issueOrder(Player* player) {
             }
         }
     }
-    
-    // Add conquered territories to player
+
     for (auto t : newTerritories) player->addTerritory(t);
 }
 std::vector<Territory*> CheaterPlayerStrategy::toAttack(Player* player) {
-    return {}; // automatic conquest handled in issueOrder
+    return {}; 
 }
 std::vector<Territory*> CheaterPlayerStrategy::toDefend(Player* player) {
-    return player->getTerritories(); // All owned territories defended
+    return player->getTerritories();
 }
 
