@@ -19,7 +19,7 @@ void AggressivePlayerStrategy::issueOrder(Player* player) {
 }
 std::vector<Territory*> AggressivePlayerStrategy::toAttack(Player* player) {
     std::vector<Territory*> attackList;
-    // Pick strongest territory and its adjacent enemy territories
+    
     int maxArmy = -1;
     Territory* strongest = nullptr;
     for (auto t : player->getTerritories()) {
