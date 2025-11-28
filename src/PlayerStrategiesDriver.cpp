@@ -22,6 +22,7 @@ void testPlayerStrategies(){
     p4->setStrategy(new NeutralPlayerStrategy());
     p5->setStrategy(new CheaterPlayerStrategy());
 
+
 	game.addPlayer(p1);
     game.addPlayer(p2);
 	game.addPlayer(p3);
@@ -33,6 +34,14 @@ void testPlayerStrategies(){
 
 	game.assignCountries();
     
+	std::vector<Territory*> territories = game.getAllTerritories();
+    for (auto& territory : territories){
+
+		territory->setArmyCount(std::rand() % 10);
+    }
+
+
+
 	game.reinforcementPhase();
 
 

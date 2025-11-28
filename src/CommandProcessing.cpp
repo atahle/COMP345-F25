@@ -316,21 +316,39 @@ FileCommandProcessorAdapter::~FileCommandProcessorAdapter() { delete flr; }
 
 void FileCommandProcessorAdapter::readCommand() {
     std::string line;
-    if (!flr->readLine(line)) {
-        std::cout << "[EOF] no more commands in file.\n";
+    std::string raw, arg;
+
+    while (true) {
+        if (!flr->readLine(line)) {
+            std::cout << "[EOF] End of file reached. Injecting 'quit' command.\n";
+            Command* c = new Command("quit", "");
+            if (!validate(*c)) {
+                c->saveEffect("Rejected: invalid command for current state.");
+            }
+            else {
+                effect(*c);
+            }
+            history->push_back(c);
+            return;
+        }
+
+        parse(line, raw, arg);
+
+        if (raw.empty()) {
+            continue;
+        }
+
+        std::cout << "Read from file: " << line << "\n";
+        Command* c = new Command(raw, arg);
+
+        if (!validate(*c)) {
+            c->saveEffect("Rejected: invalid command for current state.");
+        }
+        else {
+            effect(*c);
+        }
+
+        history->push_back(c);
         return;
     }
-    std::cout << line << "\n";
-
-    std::string raw, arg;
-    parse(line, raw, arg);
-    if (raw.empty()) return;
-
-    Command* c = new Command(raw, arg);
-    if (!validate(*c)) {
-        c->saveEffect("Rejected: invalid command for current state.");
-    } else {
-        effect(*c);
-    }
-    history->push_back(c);
 }

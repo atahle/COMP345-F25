@@ -16,8 +16,9 @@ Player::Player(const string& playerName)
     orders = new OrdersList();
     hand = new Hand();
     reinforcementPool = new int(0);
-    conqueredTerritoryThisTurn = new bool(false); // Part 4
-    diplomaticAllies = new vector<Player*>();   // Part 4
+    prevTerritoryCount = new int(0);
+    conqueredTerritoryThisTurn = new bool(false); 
+    diplomaticAllies = new vector<Player*>();  
     strategy = new HumanPlayerStrategy();
 }
 
@@ -30,7 +31,7 @@ Player::Player(const string& playerName, PlayerStrategy* initStrategy)
     reinforcementPool = new int(0);
     conqueredTerritoryThisTurn = new bool(false);
     diplomaticAllies = new vector<Player*>();
-
+	prevTerritoryCount = new int(0);
     // Assign the strategy provided
     this->strategy = initStrategy;
 }
@@ -49,9 +50,10 @@ Player::Player(const Player& other)
     hand = new Hand(*other.hand);
     orders = new OrdersList(*other.orders);
     reinforcementPool = new int(*other.reinforcementPool);
-    conqueredTerritoryThisTurn = new bool(*other.conqueredTerritoryThisTurn); // Part 4
-    diplomaticAllies = new vector<Player*>(*other.diplomaticAllies);         // Part 4
+    conqueredTerritoryThisTurn = new bool(*other.conqueredTerritoryThisTurn);
+    diplomaticAllies = new vector<Player*>(*other.diplomaticAllies);       
     strategy = nullptr;
+	prevTerritoryCount = other.prevTerritoryCount;
 }
 
 // Assignment operator: safely replaces this player's data with another's
@@ -64,9 +66,10 @@ Player& Player::operator=(const Player& other)
     delete orders;
     delete hand;
     delete reinforcementPool;
-    delete conqueredTerritoryThisTurn; // Part 4
-    delete diplomaticAllies;           // Part 4
+    delete conqueredTerritoryThisTurn; 
+    delete diplomaticAllies;           
     delete strategy;
+	delete prevTerritoryCount;
 
     name = new string(*other.name);
     territories = new vector<Territory*>();
@@ -76,9 +79,10 @@ Player& Player::operator=(const Player& other)
     hand = new Hand(*other.hand);
     orders = new OrdersList(*other.orders);
     reinforcementPool = new int(*other.reinforcementPool);
-    conqueredTerritoryThisTurn = new bool(*other.conqueredTerritoryThisTurn); // Part 4
-    diplomaticAllies = new vector<Player*>(*other.diplomaticAllies);         // Part 4
+    conqueredTerritoryThisTurn = new bool(*other.conqueredTerritoryThisTurn); 
+    diplomaticAllies = new vector<Player*>(*other.diplomaticAllies);         
     strategy = nullptr;
+	prevTerritoryCount = other.prevTerritoryCount;
 
     return *this;
 }
@@ -94,6 +98,15 @@ Player::~Player()
     delete conqueredTerritoryThisTurn; // Part 4
     delete diplomaticAllies;           // Part 4
     delete strategy;
+	delete prevTerritoryCount;
+}
+
+void Player::setPrevTerritoryCount(int i) {
+	*prevTerritoryCount = i;
+}
+
+int Player::getPrevTerritoryCount() const {
+    return *prevTerritoryCount;
 }
 
 // Adds a territory to the player if not already owned

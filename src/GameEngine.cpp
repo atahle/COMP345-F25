@@ -509,6 +509,8 @@ void GameEngine::startTournament(std::vector<std::string> maps, std::vector<std:
 		tournamentResults.push_back(mapResults);
 	}
 
+	gameState = GameState::Start;
+
 	// report
 	std::cout << "\n\n";
 	std::cout << "############################################################" << std::endl;

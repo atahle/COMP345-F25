@@ -59,6 +59,8 @@ public:
     void addDiplomaticAlly(Player* otherPlayer);    //
     bool isDiplomaticAlly(Player* otherPlayer) const;
     void clearTurnEffects();                        // Clears allies and conquest flag
+	void setPrevTerritoryCount(int i);
+	int getPrevTerritoryCount() const;
 
     // Strategy methods
     void setStrategy(PlayerStrategy* newStrategy);
@@ -69,7 +71,7 @@ private:
     OrdersList* orders;                  // list of player’s orders
     Hand* hand;                          // player’s hand of cards
     int* reinforcementPool;              // number of reinforcement armies available to player
-
+    int* prevTerritoryCount;            
     // Part 4 Data Members
     bool* conqueredTerritoryThisTurn;
     vector<Player*>* diplomaticAllies;
